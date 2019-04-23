@@ -2,7 +2,7 @@ package automail;
 
 public class PriorityMailItem extends MailItem{
 	
-	/** The priority of the mail item from 1 low to 100 high */
+	/** The priority of the mail item from 10 low to 100 high */
     private final int PRIORITY_LEVEL;
     
 	public PriorityMailItem(int dest_floor, int arrival_time, int weight, int priority_level) {
