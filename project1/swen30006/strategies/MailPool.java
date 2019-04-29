@@ -40,14 +40,23 @@ public class MailPool implements IMailPool {
 			return order;
 		}
 	}
-	
+
+	/**
+	 * number of robots for a pair team
+	 */
+	public static final int PAIR = 2;
+	/**
+	 * number of robots for a triple team
+	 */
+	public static final int TRIPLE = 3;
+
 	private LinkedList<Item> pool;
 	private LinkedList<Robot> robots;
 
-	public MailPool(int nrobots){
+	public MailPool(){
 		// Start empty
-		pool = new LinkedList<Item>();
-		robots = new LinkedList<Robot>();
+		pool = new LinkedList<>();
+		robots = new LinkedList<>();
 	}
 
 	public void addToPool(MailItem mailItem) {
@@ -55,41 +64,83 @@ public class MailPool implements IMailPool {
 		pool.add(item);
 		pool.sort(new ItemComparator());
 	}
-	
+
+	/**
+	 * This method is called on each time step
+	 * @throws ItemTooHeavyException if item to be delivered has weight greater
+	 *                               than triple weight limit
+	 */
 	@Override
-	public void step() throws ItemTooHeavyException {
+	public void step() {
 		try{
-			ListIterator<Robot> i = robots.listIterator();
-			while (i.hasNext()) loadRobot(i);
+			// try to load robots when there are robots available and
+			// mails to be delivered
+			while(robots.size() > 0 && pool.size() > 0) loadRobot();
 		} catch (Exception e) { 
             throw e; 
         } 
 	}
 	
-	private void loadRobot(ListIterator<Robot> i) throws ItemTooHeavyException {
-		Robot robot = i.next();
-		assert(robot.isEmpty());
-		// System.out.printf("P: %3d%n", pool.size());
-		ListIterator<Item> j = pool.listIterator();
+	private void loadRobot() {
+		ListIterator<Robot> i = robots.listIterator(0);
+		ListIterator<Item> j = pool.listIterator(0);
 		if (pool.size() > 0) {
-			try {
-			robot.addToHand(j.next().mailItem); // hand first as we want higher priority delivered first
-			j.remove();
-			if (pool.size() > 0) {
-				robot.addToTube(j.next().mailItem);
-				j.remove();
+			MailItem mail_to_deliver = j.next().mailItem;
+			// move the cursor back
+			j.previous();
+			try{
+				if (mail_to_deliver.getWeight() <= Robot.INDIVIDUAL_MAX_WEIGHT)
+					loadLightItem(i, j);
+				else if (mail_to_deliver.getWeight() <= Robot.PAIR_MAX_WEIGHT) {
+					loadHeavyItem(i, mail_to_deliver, PAIR);
+					j.remove();
+				} else if (mail_to_deliver.getWeight() <= Robot.TRIPLE_MAX_WEIGHT) {
+					loadHeavyItem(i, mail_to_deliver, TRIPLE);
+					j.remove();
+				}
+			} catch (Exception e) {
+				throw e;
 			}
-			robot.dispatch(); // send the robot off if it has any items to deliver
-			i.remove();       // remove from mailPool queue
-			} catch (Exception e) { 
-	            throw e; 
-	        } 
 		}
 	}
+
+	private void loadLightItem(ListIterator<Robot> i, ListIterator<Item> j) {
+		Robot robot = i.next();
+		assert(robot != null);
+		robot.addToHand(j.next().mailItem);
+		j.remove();
+		// try to load another mailitem to the tube
+		if(pool.size() > 0) {
+			MailItem newItem = j.next().mailItem;
+			if(newItem.getWeight() <= Robot.INDIVIDUAL_MAX_WEIGHT) {
+				robot.addToTube(newItem);
+				j.remove();
+			}
+			// too heavy to deliver alone, move the cursor back
+			else j.previous();
+		}
+		robot.dispatch();
+		i.remove();
+	}
+
+	// required_robot is the number of robot needed to deliver the item
+	private void loadHeavyItem(ListIterator<Robot> i, MailItem to_deliver,
+                               int required_robot) {
+		// not enough robots
+        if(robots.size() < required_robot)
+            return;
+        for(int k = 0; k < required_robot; k++) {
+            Robot robot = i.next();
+            assert (robot != null);
+            robot.addToHand(to_deliver);
+            robot.setHeavyItem(true);
+            robot.dispatch();
+            i.remove();
+        }
+    }
 
 	@Override
 	public void registerWaiting(Robot robot) { // assumes won't be there already
 		robots.add(robot);
 	}
-
 }
