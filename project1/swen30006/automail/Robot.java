@@ -3,6 +3,8 @@ package automail;
 import exceptions.ExcessiveDeliveryException;
 import exceptions.ItemTooHeavyException;
 import strategies.IMailPool;
+
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -26,7 +28,6 @@ public class Robot implements IRobot {
     
     private int deliveryCounter;
     private boolean carryingHeavyItem;
-    private int stepWaited;
 
     /**
      * Initiates the robot's location at the start to be at the mailroom
@@ -46,7 +47,6 @@ public class Robot implements IRobot {
         this.receivedDispatch = false;
         this.deliveryCounter = 0;
         carryingHeavyItem = false;
-        stepWaited = 0;
     }
     
     public void dispatch() {
@@ -146,25 +146,11 @@ public class Robot implements IRobot {
      * @param destination the floor towards which the robot is moving
      */
     private void moveTowards(int destination) {
-        if(carryingHeavyItem) {
-            stepWaited++;
-            if(stepWaited == 3) {
-                if(current_floor < destination){
-                    current_floor++;
-                } else {
-                    current_floor--;
-                }
-                stepWaited = 0;
-            }
+        if(current_floor < destination){
+            current_floor++;
+        } else {
+            current_floor--;
         }
-        else {
-            if(current_floor < destination){
-                current_floor++;
-            } else {
-                current_floor--;
-            }
-        }
-
     }
     
     private String getIdTube() {
@@ -217,4 +203,10 @@ public class Robot implements IRobot {
 		assert(tube == null);
 		tube = mailItem;
 	}
+
+	public ArrayList<String> getID() {
+	    ArrayList<String> out = new ArrayList<>();
+	    out.add(id);
+	    return out;
+    }
 }

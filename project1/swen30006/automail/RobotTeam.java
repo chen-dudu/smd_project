@@ -9,35 +9,84 @@ import java.util.ArrayList;
  * Team: W9-5
  * Description:
  */
-public class RobotTeam implements IRobot{
+public class RobotTeam implements IRobot {
 
-    private ArrayList<IRobot> robotGroup = new ArrayList<IRobot>();
+    private MailItem mail_to_deliver;
+    private ArrayList<IRobot> robotMembers;
+    private int current_floor;
+    private boolean iteamDelivered;
+    private int stepWaited;
+
+    public RobotTeam(MailItem mail_to_deliver) {
+        robotMembers = new ArrayList<>();
+        this.mail_to_deliver = mail_to_deliver;
+        current_floor = Building.MAILROOM_LOCATION;
+        iteamDelivered = false;
+        stepWaited = 3;
+    }
+
+    public void addToTeam(IRobot robot) {
+        robotMembers.add(robot);
+    }
 
     public void dispatch(){
-        for (IRobot robot: robotGroup) {
+        for (IRobot robot: robotMembers) {
             robot.dispatch();
         }
     }
 
     public void step() throws ExcessiveDeliveryException {
-        for (IRobot robot: robotGroup) {
-            robot.step();
+        if(stepWaited == 3) {
+            for (IRobot robot: robotMembers) {
+                robot.step();
+            }
+
+            if(current_floor < mail_to_deliver.getDestFloor()){
+                current_floor++;
+            } else {
+                current_floor--;
+            }
+
+            if(current_floor == mail_to_deliver.getDestFloor())
+                iteamDelivered = true;
+
+            stepWaited = 0;
+        }
+        else {
+            stepWaited++;
         }
     }
 
     public boolean isEmpty() {
-        for (IRobot robot: robotGroup) {
+        for (IRobot robot: robotMembers) {
             if (!robot.isEmpty()) {
-                return False;
+                return false;
             }
         }
-        return True;
+        return true;
     }
 
     public void addToHand(MailItem mailItem) {
-        for (IRobot robot: robotGroup) {
+        for (IRobot robot: robotMembers) {
             robot.addToHand(mailItem);
         }
     }
 
+    public void addToTube(MailItem mailItem) { }
+
+    public ArrayList<IRobot> getMembers() {
+        return robotMembers;
+    }
+
+    public ArrayList<String> getID() {
+        ArrayList<String> out = new ArrayList<>();
+        for(IRobot next: robotMembers) {
+            out.add(next.getID().get(0));
+        }
+        return out;
+    }
+
+    public boolean getStatus() {
+        return iteamDelivered;
+    }
 }

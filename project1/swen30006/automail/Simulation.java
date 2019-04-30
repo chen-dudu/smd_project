@@ -37,7 +37,7 @@ public class Simulation {
 
 		// MailPool
 		IMailPool mailPool = new MailPool();
-		
+
         MAIL_DELIVERED = new ArrayList<MailItem>();
                 
         // Used to see whether a seed is initialized or not
@@ -65,6 +65,9 @@ public class Simulation {
         System.out.printf("Seed: %s%n", seed == null ? "null" : seed.toString());
 
         Automail automail = new Automail(mailPool, new ReportDelivery(), robots);
+
+        mailPool.setMailPool(automail);
+
         MailGenerator mailGenerator = new MailGenerator(MAIL_TO_CREATE, MAIL_MAX_WEIGHT, automail.mailPool, seedMap);
         
         // Initiate all the mail
@@ -98,7 +101,6 @@ public class Simulation {
     			total_score += calculateDeliveryScore(deliveryItem);
     		}
     	}
-
     }
     
     private static double calculateDeliveryScore(MailItem deliveryItem) {

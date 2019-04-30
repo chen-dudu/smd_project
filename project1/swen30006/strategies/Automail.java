@@ -3,20 +3,20 @@ package strategies;
 import automail.IMailDelivery;
 import automail.IRobot;
 import automail.Robot;
+import automail.RobotTeam;
 import exceptions.ExcessiveDeliveryException;
 import exceptions.ItemTooHeavyException;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.ArrayList;
 
 public class Automail {
 
-    public Robot[] robots;
     public IMailPool mailPool;
 
     private LinkedList<IRobot> individualRobots;
-    private ArrayList<IRobot> teamRobots;
+    private LinkedList<RobotTeam> teamRobots;
 
     public Automail(IMailPool mailPool, IMailDelivery delivery, int numRobots) {
         // Initialize the MailPool
@@ -24,16 +24,43 @@ public class Automail {
 
         // Initialize robots
         individualRobots = new LinkedList<>();
-        teamRobots = new LinkedList<>()
+        teamRobots = new LinkedList<>();
         for(int i = 0; i < numRobots; i++)
             individualRobots.add(new Robot(delivery, mailPool));
     }
 
     public void step() throws ItemTooHeavyException, ExcessiveDeliveryException {
         mailPool.step();
-        ListIterator<IRobot> i = individualRobots.listIterator(0);
-        ListIterator<IRobot> j = teamRobots.listIterator(0);
+        ListIterator<IRobot> i = individualRobots.listIterator();
+        ListIterator<RobotTeam> j = teamRobots.listIterator();
         while (i.hasNext()) i.next().step();
-        while (j.hasNext()) j.next().step();
+
+        while (j.hasNext()) {
+            RobotTeam temp = j.next();
+            temp.step();
+            if(temp.getStatus()) {
+                dismiss(temp);
+            }
+        }
+    }
+
+    public void addTeam(RobotTeam newTeam) {
+        ArrayList<String> memberIDs = newTeam.getID();
+        for(String memberID: memberIDs) {
+            ListIterator<IRobot> i = individualRobots.listIterator();
+            while(i.hasNext()) {
+                if(memberID.equals(i.next().getID().get(0))) {
+                    i.remove();
+                    break;
+                }
+            }
+        }
+        teamRobots.add(newTeam);
+    }
+
+    private void dismiss(RobotTeam team) {
+        ArrayList<IRobot> members = team.getMembers();
+        individualRobots.addAll(members);
+        teamRobots.remove(team);
     }
 }

@@ -28,4 +28,6 @@ public interface IMailPool {
      */	
 	void registerWaiting(Robot robot);
 
+	void setMailPool(Automail automail);
+
 }
