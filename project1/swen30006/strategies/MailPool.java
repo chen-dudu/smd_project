@@ -14,14 +14,14 @@ public class MailPool implements IMailPool {
 		int destination;
 		MailItem mailItem;
 		// Use stable sort to keep arrival time relative positions
-		
+
 		public Item(MailItem mailItem) {
 			priority = (mailItem instanceof PriorityMailItem) ? ((PriorityMailItem) mailItem).getPriorityLevel() : 1;
 			destination = mailItem.getDestFloor();
 			this.mailItem = mailItem;
 		}
 	}
-	
+
 	public class ItemComparator implements Comparator<Item> {
 		@Override
 		public int compare(Item i1, Item i2) {
@@ -40,6 +40,10 @@ public class MailPool implements IMailPool {
 	}
 
 	/**
+	 * number of robots for an individual
+	 */
+	public static final int SINGLE = 1;
+	/**
 	 * number of robots for a pair team
 	 */
 	public static final int PAIR = 2;
@@ -54,7 +58,8 @@ public class MailPool implements IMailPool {
 
 	private LinkedList<Item> pool;
 	private LinkedList<IRobot> waitinglRobots;
-    private Automail automail;
+	private Automail automail;
+	private int requirement = SINGLE;
 
 	public MailPool() {
 		// Start empty/
@@ -63,8 +68,8 @@ public class MailPool implements IMailPool {
 	}
 
 	public void setMailPool(Automail automail) {
-	    this.automail = automail;
-    }
+		this.automail = automail;
+	}
 
 	public void addToPool(MailItem mailItem) {
 		Item item = new Item(mailItem);
@@ -82,28 +87,28 @@ public class MailPool implements IMailPool {
 		try{
 			// try to load robots when there are robots available and
 			// mails to be delivered
-			while(waitinglRobots.size() > 0 && pool.size() > 0) loadRobot();
-		} catch (Exception e) { 
-            throw e; 
-        } 
+			while(waitinglRobots.size() > 0 && pool.size() > 0 && waitinglRobots.size() >= requirement) loadRobot();
+		} catch (Exception e) {
+			throw e;
+		}
 	}
-	
+
 	private void loadRobot() {
 		ListIterator<IRobot> i = waitinglRobots.listIterator();
 		ListIterator<Item> j = pool.listIterator();
 		if (pool.size() > 0) {
 			MailItem mail_to_deliver = j.next().mailItem;
-			// move the cursor back
-			j.previous();
 			try{
-				if (mail_to_deliver.getWeight() <= INDIVIDUAL_MAX_WEIGHT)
+				if (mail_to_deliver.getWeight() <= INDIVIDUAL_MAX_WEIGHT) {
+					// move the cursor back
+					j.previous();
 					loadLightItem(i, j);
-				else if (mail_to_deliver.getWeight() <= PAIR_MAX_WEIGHT) {
+				} else if (mail_to_deliver.getWeight() <= PAIR_MAX_WEIGHT) {
+					requirement = PAIR;
 					loadHeavyItem(i, mail_to_deliver, PAIR);
-					j.remove();
 				} else if (mail_to_deliver.getWeight() <= TRIPLE_MAX_WEIGHT) {
+					requirement = TRIPLE;
 					loadHeavyItem(i, mail_to_deliver, TRIPLE);
-					j.remove();
 				}
 			} catch (Exception e) {
 				throw e;
@@ -132,23 +137,25 @@ public class MailPool implements IMailPool {
 
 	// required_robot is the number of robot needed to deliver the item
 	private void loadHeavyItem(ListIterator<IRobot> i, MailItem to_deliver,
-                               int required_robot) {
-		// not enough robots
-        if(waitinglRobots.size() < required_robot)
-            return;
+							   int required_robot) {
+		if (waitinglRobots.size() >= requirement) {
 
-        RobotTeam team = new RobotTeam(to_deliver);
+			RobotTeam team = new RobotTeam(to_deliver);
 
-        for(int k = 0; k < required_robot; k++) {
-            IRobot robot = i.next();
-            assert (robot != null);
-            team.addToTeam(robot);
-            i.remove();
-        }
-        team.addToHand(to_deliver);
-        team.dispatch();
-        automail.addTeam(team);
-    }
+			for(int k = 0; k < required_robot; k++) {
+				IRobot robot = i.next();
+				assert (robot != null);
+				team.addToTeam(robot);
+				i.remove();
+			}
+			team.addToHand(to_deliver);
+			team.dispatch();
+			automail.addTeam(team);
+
+			pool.removeFirst();
+			requirement = SINGLE;
+		}
+	}
 
 	@Override
 	public void registerWaiting(Robot robot) { // assumes won't be there already
