@@ -2,6 +2,7 @@ package strategies;
 
 import java.util.LinkedList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ListIterator;
 
 import automail.*;
@@ -78,18 +79,20 @@ public class MailPool implements IMailPool {
 	 *                               greater than triple weight limit
 	 */
 	@Override
-	public void step() {
+	public void step() throws ItemTooHeavyException {
 		try{
 			// try to load robots when there are robots available and
 			// mails to be delivered
-			while(waitinglRobots.size() > 0 && pool.size() > 0) loadRobot();
+			ListIterator<IRobot> i = waitinglRobots.listIterator();
+//			while(waitinglRobots.size() > 0 && pool.size() > 0)
+			while(i.hasNext())
+				loadRobot(i);
 		} catch (Exception e) { 
             throw e; 
         } 
 	}
 	
-	private void loadRobot() {
-		ListIterator<IRobot> i = waitinglRobots.listIterator();
+	private void loadRobot(ListIterator<IRobot> i) throws ItemTooHeavyException {
 		ListIterator<Item> j = pool.listIterator();
 		if (pool.size() > 0) {
 			MailItem mail_to_deliver = j.next().mailItem;
@@ -99,16 +102,18 @@ public class MailPool implements IMailPool {
 				if (mail_to_deliver.getWeight() <= INDIVIDUAL_MAX_WEIGHT)
 					loadLightItem(i, j);
 				else if (mail_to_deliver.getWeight() <= PAIR_MAX_WEIGHT) {
-					loadHeavyItem(i, mail_to_deliver, PAIR);
-					j.remove();
+					loadHeavyItem(i, j, PAIR);
 				} else if (mail_to_deliver.getWeight() <= TRIPLE_MAX_WEIGHT) {
-					loadHeavyItem(i, mail_to_deliver, TRIPLE);
-					j.remove();
-				}
+					loadHeavyItem(i, j, TRIPLE);
+				} else
+					throw new ItemTooHeavyException();
 			} catch (Exception e) {
 				throw e;
 			}
 		}
+		else
+			// nothing to load, move to next robot
+			i.next();
 	}
 
 	private void loadLightItem(ListIterator<IRobot> i, ListIterator<Item> j) {
@@ -124,19 +129,24 @@ public class MailPool implements IMailPool {
 				j.remove();
 			}
 			// too heavy to deliver alone, move the cursor back
-			else j.previous();
+			else
+				j.previous();
 		}
 		robot.dispatch();
 		i.remove();
 	}
 
 	// required_robot is the number of robot needed to deliver the item
-	private void loadHeavyItem(ListIterator<IRobot> i, MailItem to_deliver,
-                               int required_robot) {
+	private void loadHeavyItem(ListIterator<IRobot> i, ListIterator<Item> j,
+							   int required_robot) {
 		// not enough robots
-        if(waitinglRobots.size() < required_robot)
-            return;
+		if (waitinglRobots.size() < required_robot) {
+			i.next();
+			return;
+    	}
 
+		MailItem to_deliver = j.next().mailItem;
+		j.remove();
         RobotTeam team = new RobotTeam(to_deliver);
 
         for(int k = 0; k < required_robot; k++) {

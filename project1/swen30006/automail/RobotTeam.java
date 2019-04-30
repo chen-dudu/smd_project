@@ -22,7 +22,7 @@ public class RobotTeam implements IRobot {
         this.mail_to_deliver = mail_to_deliver;
         current_floor = Building.MAILROOM_LOCATION;
         iteamDelivered = false;
-        stepWaited = 3;
+        stepWaited = 0;
     }
 
     public void addToTeam(IRobot robot) {
@@ -36,6 +36,7 @@ public class RobotTeam implements IRobot {
     }
 
     public void step() throws ExcessiveDeliveryException {
+        stepWaited++;
         if(stepWaited == 3) {
             for (IRobot robot: robotMembers) {
                 robot.step();
@@ -52,9 +53,9 @@ public class RobotTeam implements IRobot {
 
             stepWaited = 0;
         }
-        else {
-            stepWaited++;
-        }
+//        else {
+//            stepWaited++;
+//        }
     }
 
     public boolean isEmpty() {
