@@ -50,6 +50,10 @@ public class MailPool implements IMailPool {
 	 */
 	public static final int TRIPLE = 3;
 
+	static public final int INDIVIDUAL_MAX_WEIGHT = 2000;
+	static public final int PAIR_MAX_WEIGHT = 2600;
+	static public final int TRIPLE_MAX_WEIGHT = 3000;
+
 	private LinkedList<Item> pool;
 	private LinkedList<Robot> robots;
 
@@ -89,12 +93,12 @@ public class MailPool implements IMailPool {
 			// move the cursor back
 			j.previous();
 			try{
-				if (mail_to_deliver.getWeight() <= Robot.INDIVIDUAL_MAX_WEIGHT)
+				if (mail_to_deliver.getWeight() <= INDIVIDUAL_MAX_WEIGHT)
 					loadLightItem(i, j);
-				else if (mail_to_deliver.getWeight() <= Robot.PAIR_MAX_WEIGHT) {
+				else if (mail_to_deliver.getWeight() <= PAIR_MAX_WEIGHT) {
 					loadHeavyItem(i, mail_to_deliver, PAIR);
 					j.remove();
-				} else if (mail_to_deliver.getWeight() <= Robot.TRIPLE_MAX_WEIGHT) {
+				} else if (mail_to_deliver.getWeight() <= TRIPLE_MAX_WEIGHT) {
 					loadHeavyItem(i, mail_to_deliver, TRIPLE);
 					j.remove();
 				}

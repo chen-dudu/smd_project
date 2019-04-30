@@ -9,11 +9,7 @@ import java.util.TreeMap;
 /**
  * The robot delivers mail!
  */
-public class Robot {
-	
-    static public final int INDIVIDUAL_MAX_WEIGHT = 2000;
-    static public final int PAIR_MAX_WEIGHT = 2600;
-    static public final int TRIPLE_MAX_WEIGHT = 3000;
+public class Robot implements IRobot {
 
     IMailDelivery delivery;
     protected final String id;
