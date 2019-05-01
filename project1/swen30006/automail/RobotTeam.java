@@ -53,9 +53,6 @@ public class RobotTeam implements IRobot {
 
             stepWaited = 0;
         }
-//        else {
-//            stepWaited++;
-//        }
     }
 
     public boolean isEmpty() {
