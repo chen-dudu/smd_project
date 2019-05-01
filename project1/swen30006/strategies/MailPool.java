@@ -84,9 +84,7 @@ public class MailPool implements IMailPool {
 			// try to load robots when there are robots available and
 			// mails to be delivered
 			ListIterator<IRobot> i = waitinglRobots.listIterator();
-//			while(waitinglRobots.size() > 0 && pool.size() > 0)
-			while(i.hasNext())
-				loadRobot(i);
+			while(i.hasNext()) loadRobot(i);
 		} catch (Exception e) { 
             throw e; 
         } 
@@ -112,7 +110,7 @@ public class MailPool implements IMailPool {
 			}
 		}
 		else
-			// nothing to load, move to next robot
+			// nothing to load, move to next the robot
 			i.next();
 	}
 
@@ -141,6 +139,7 @@ public class MailPool implements IMailPool {
 							   int required_robot) {
 		// not enough robots
 		if (waitinglRobots.size() < required_robot) {
+			// not enough robots to carry, move on
 			i.next();
 			return;
     	}
