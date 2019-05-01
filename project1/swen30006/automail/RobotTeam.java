@@ -14,14 +14,14 @@ public class RobotTeam implements IRobot {
     private MailItem mail_to_deliver;
     private ArrayList<IRobot> robotMembers;
     private int current_floor;
-    private boolean iteamDelivered;
+    private boolean itemDelivered;
     private int stepWaited;
 
     public RobotTeam(MailItem mail_to_deliver) {
         robotMembers = new ArrayList<>();
         this.mail_to_deliver = mail_to_deliver;
         current_floor = Building.MAILROOM_LOCATION;
-        iteamDelivered = false;
+        itemDelivered = false;
         stepWaited = 0;
     }
 
@@ -49,7 +49,7 @@ public class RobotTeam implements IRobot {
             }
 
             if(current_floor == mail_to_deliver.getDestFloor())
-                iteamDelivered = true;
+                itemDelivered = true;
 
             stepWaited = 0;
         }
@@ -85,6 +85,6 @@ public class RobotTeam implements IRobot {
     }
 
     public boolean getStatus() {
-        return iteamDelivered;
+        return itemDelivered;
     }
 }

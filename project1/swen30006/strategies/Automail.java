@@ -31,15 +31,17 @@ public class Automail {
 
     public void step() throws ItemTooHeavyException, ExcessiveDeliveryException {
         mailPool.step();
+
         ListIterator<IRobot> i = individualRobots.listIterator();
         ListIterator<RobotTeam> j = teamRobots.listIterator();
-        while (i.hasNext()) i.next().step();
+        while (i.hasNext())
+            i.next().step();
 
         while (j.hasNext()) {
-            RobotTeam temp = j.next();
-            temp.step();
-            if(temp.getStatus()) {
-                dismiss(temp);
+            RobotTeam team = j.next();
+            team.step();
+            if(team.getStatus()) {
+                dismiss(team);
             }
         }
     }
