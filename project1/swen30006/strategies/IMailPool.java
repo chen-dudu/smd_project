@@ -1,7 +1,7 @@
 package strategies;
 
 import automail.MailItem;
-import automail.Robot;
+import automail.IRobot;
 import exceptions.ItemTooHeavyException;
 
 /**
@@ -26,7 +26,7 @@ public interface IMailPool {
 	/**
      * @param robot refers to a robot which has arrived back ready for more mailItems to deliver
      */	
-	void registerWaiting(Robot robot);
+	void registerWaiting(IRobot robot);
 
 	void setMailPool(Automail automail);
 

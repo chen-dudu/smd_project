@@ -13,7 +13,7 @@ import java.util.TreeMap;
  */
 public class Robot implements IRobot {
 
-    IMailDelivery delivery;
+    private IMailDelivery delivery;
     protected final String id;
     /** Possible states the robot can be in */
     public enum RobotState { DELIVERING, WAITING, RETURNING }
@@ -27,13 +27,10 @@ public class Robot implements IRobot {
     private MailItem tube = null;
     
     private int deliveryCounter;
-    private boolean carryingHeavyItem;
 
     /**
      * Initiates the robot's location at the start to be at the mailroom
      * also set it to be waiting for mail.
-     * @param behaviour governs selection of mail items for delivery
-     *                  and behaviour on priority arrivals
      * @param delivery governs the final delivery
      * @param mailPool is the source of mail items
      */
@@ -46,7 +43,6 @@ public class Robot implements IRobot {
         this.mailPool = mailPool;
         this.receivedDispatch = false;
         this.deliveryCounter = 0;
-        carryingHeavyItem = false;
     }
     
     public void dispatch() {
@@ -97,7 +93,6 @@ public class Robot implements IRobot {
     			if(current_floor == destination_floor){
                     // Delivery complete, report this to the simulator!
                     delivery.deliver(deliveryItem);
-                    setHeavyItem(false);
                     deliveryItem = null;
                     deliveryCounter++;
                     // Implies a simulation bug
@@ -123,14 +118,6 @@ public class Robot implements IRobot {
     			}
                 break;
     	}
-    }
-
-    /**
-     * Sets the flag indicating whether the robot is carrying heavy item or not
-     * @param havingHeavyItem the status of having heavy item or not
-     */
-    public void setHeavyItem(boolean havingHeavyItem) {
-        this.carryingHeavyItem = havingHeavyItem;
     }
 
     /**

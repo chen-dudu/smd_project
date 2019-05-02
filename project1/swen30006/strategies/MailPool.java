@@ -2,7 +2,6 @@ package strategies;
 
 import java.util.LinkedList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.ListIterator;
 
 import automail.*;
@@ -160,7 +159,7 @@ public class MailPool implements IMailPool {
     }
 
 	@Override
-	public void registerWaiting(Robot robot) { // assumes won't be there already
+	public void registerWaiting(IRobot robot) { // assumes won't be there already
 		waitinglRobots.add(robot);
 	}
 }

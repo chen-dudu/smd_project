@@ -68,7 +68,7 @@ public class Simulation {
 
         mailPool.setMailPool(automail);
 
-        MailGenerator mailGenerator = new MailGenerator(MAIL_TO_CREATE, MAIL_MAX_WEIGHT, automail.mailPool, seedMap);
+        MailGenerator mailGenerator = new MailGenerator(MAIL_TO_CREATE, MAIL_MAX_WEIGHT, mailPool, seedMap);
         
         // Initiate all the mail
         mailGenerator.generateAllMail();

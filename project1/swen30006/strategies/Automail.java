@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class Automail {
 
-    public IMailPool mailPool;
+    private IMailPool mailPool;
 
     private LinkedList<IRobot> individualRobots;
     private LinkedList<RobotTeam> teamRobots;
