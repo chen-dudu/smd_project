@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
+ * Team: W9-5
  * This class simulates the behaviour of AutoMail
  */
 public class Simulation {	
@@ -73,7 +74,7 @@ public class Simulation {
         // Initiate all the mail
         mailGenerator.generateAllMail();
 
-        // PriorityMailItem priority;  // Not used in this version
+        // PriorityMailItem priority;
         while(MAIL_DELIVERED.size() != mailGenerator.MAIL_TO_CREATE) {
             mailGenerator.step();
             try {

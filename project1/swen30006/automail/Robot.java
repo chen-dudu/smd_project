@@ -1,7 +1,6 @@
 package automail;
 
 import exceptions.ExcessiveDeliveryException;
-import exceptions.ItemTooHeavyException;
 import strategies.IMailPool;
 
 import java.util.ArrayList;
@@ -9,6 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * Team: W9-5
  * The robot delivers mail!
  */
 public class Robot implements IRobot {

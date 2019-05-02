@@ -7,14 +7,17 @@ import java.util.ArrayList;
 
 /**
  * Team: W9-5
- * Description:
+ * Description: Robots work as a team to deliver mail
  */
 public class RobotTeam implements IRobot {
 
     private MailItem mail_to_deliver;
+    // all the robots in the team
     private ArrayList<IRobot> robotMembers;
     private int current_floor;
+    // indicator of whether the team has delivered the mail
     private boolean itemDelivered;
+    // number of time steps the team has waited
     private int stepWaited;
 
     public RobotTeam(MailItem mail_to_deliver) {
@@ -25,6 +28,10 @@ public class RobotTeam implements IRobot {
         stepWaited = 0;
     }
 
+    /**
+     * add a new robot to the team
+     * @param robot the robot to be added to the team
+     */
     public void addToTeam(IRobot robot) {
         robotMembers.add(robot);
     }
@@ -38,6 +45,7 @@ public class RobotTeam implements IRobot {
     public void step() throws ExcessiveDeliveryException {
         stepWaited++;
         if(stepWaited == 3) {
+            // has waited for three time steps, can make a move now
             for (IRobot robot: robotMembers) {
                 robot.step();
             }
@@ -47,7 +55,7 @@ public class RobotTeam implements IRobot {
             } else {
                 current_floor--;
             }
-
+            // reach the destination, have the mail delivered
             if(current_floor == mail_to_deliver.getDestFloor())
                 itemDelivered = true;
 
@@ -70,8 +78,16 @@ public class RobotTeam implements IRobot {
         }
     }
 
+    /**
+     * robots in the team do not use tube to deliver mailItem
+     * @param mailItem mailItem to be added
+     */
     public void addToTube(MailItem mailItem) { }
 
+    /**
+     * returns all the robots in the team
+     * @return an ArrayList of robots in the team
+     */
     public ArrayList<IRobot> getMembers() {
         return robotMembers;
     }
@@ -84,6 +100,10 @@ public class RobotTeam implements IRobot {
         return out;
     }
 
+    /**
+     * return the status of whether the team has delivered the mailItem
+     * @return true if the team has delivered the mailItem
+     */
     public boolean getStatus() {
         return itemDelivered;
     }
