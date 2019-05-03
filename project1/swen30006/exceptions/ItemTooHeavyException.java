@@ -1,7 +1,7 @@
 package exceptions;
 
 /**
- * This exception is thrown when a robot takes a MailItem from its StorageTube which is too heavy for that robot
+ * This exception is thrown when a mailitem is too heavy for the robot/team to deliver
  */
 public class ItemTooHeavyException extends Exception {
     public ItemTooHeavyException(){
