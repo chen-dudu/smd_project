@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 /**
  * Team: W9-5
- * Description: Robots work as a team to deliver mail
+ * Robots work as a team to deliver mail
  */
 public class RobotTeam implements IRobot {
 
