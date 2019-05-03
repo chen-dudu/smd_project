@@ -17,7 +17,7 @@ public class Robot implements IRobot {
     protected final String id;
     /** Possible states the robot can be in */
     public enum RobotState { DELIVERING, WAITING, RETURNING }
-    public RobotState current_state;
+    private RobotState current_state;
     private int current_floor;
     private int destination_floor;
     private IMailPool mailPool;
@@ -124,7 +124,7 @@ public class Robot implements IRobot {
      * Sets the route for the robot
      */
     private void setRoute() {
-        /** Set the destination floor */
+        // Set the destination floor
         destination_floor = deliveryItem.getDestFloor();
     }
 

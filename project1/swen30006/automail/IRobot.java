@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Team: W9-5
- * Description: This class is the common interface implemented by different
+ * This class is the common interface implemented by different
  * types of robots and a composite robot class to achieve composite design
  */
 public interface IRobot {

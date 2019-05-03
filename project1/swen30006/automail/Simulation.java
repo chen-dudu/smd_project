@@ -27,19 +27,24 @@ public class Simulation {
     private static ArrayList<MailItem> MAIL_DELIVERED;
     private static double total_score = 0;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ItemTooHeavyException {
     	Properties automailProperties = new Properties();
-    	// TODO: path adjust for Eclipse
-    	String fileName = "automail.properties";
-    	loadProperty(automailProperties, fileName);
+    	String PropertyFileName = "automail.properties";
+    	loadProperty(automailProperties, PropertyFileName);
 
 		String seedProp = automailProperties.getProperty("Seed");
 		int robots = Integer.parseInt(automailProperties.getProperty("Robots"));
 
-		// MailPool
+		// not enough robots in the system to perform the task
+		if(robots < 1 || (robots < MailPool.PAIR && MAIL_MAX_WEIGHT > MailPool.INDIVIDUAL_MAX_WEIGHT) ||
+				(robots < MailPool.TRIPLE && MAIL_MAX_WEIGHT > MailPool.PAIR_MAX_WEIGHT)) {
+			throw new ItemTooHeavyException();
+		}
+
+
 		IMailPool mailPool = new MailPool();
 
-        MAIL_DELIVERED = new ArrayList<MailItem>();
+        MAIL_DELIVERED = new ArrayList<>();
                 
         // Used to see whether a seed is initialized or not
         HashMap<Boolean, Integer> seedMap = new HashMap<>();
@@ -74,7 +79,6 @@ public class Simulation {
         // Initiate all the mail
         mailGenerator.generateAllMail();
 
-        // PriorityMailItem priority;
         while(MAIL_DELIVERED.size() != mailGenerator.MAIL_TO_CREATE) {
             mailGenerator.step();
             try {
@@ -115,12 +119,13 @@ public class Simulation {
         return Math.pow(Clock.Time() - deliveryItem.getArrivalTime(),penalty)*(1+Math.sqrt(priority_weight));
     }
 
-    public static void printResults(){
+    private static void printResults(){
         System.out.println("T: "+Clock.Time()+" | Simulation complete!");
         System.out.println("Final Delivery time: "+Clock.Time());
         System.out.printf("Final Score: %.2f%n", total_score);
     }
 
+    // this method initialise properties for the system (default or from file)
     private static void loadProperty(Properties property,
 									 String propertyFileName) throws IOException {
 		// Default properties

@@ -23,14 +23,14 @@ public class Automail {
     // list of robots working alone
     private LinkedList<IRobot> individualRobots;
     // list of teams
-    private LinkedList<RobotTeam> teamRobots;
+    private LinkedList<RobotTeam> teams;
 
     public Automail(IMailPool mailPool, IMailDelivery delivery, int numRobots) {
         // Initialize the MailPool
         this.mailPool = mailPool;
 
         // Initialize robots
-        teamRobots = new LinkedList<>();
+        teams = new LinkedList<>();
         individualRobots = new LinkedList<>();
         for(int i = 0; i < numRobots; i++)
             individualRobots.add(new Robot(delivery, mailPool));
@@ -47,7 +47,7 @@ public class Automail {
         mailPool.step();
 
         ListIterator<IRobot> i = individualRobots.listIterator();
-        ListIterator<RobotTeam> j = teamRobots.listIterator();
+        ListIterator<RobotTeam> j = teams.listIterator();
         // step each individual robots
         while (i.hasNext())
             i.next().step();
@@ -78,7 +78,7 @@ public class Automail {
                 }
             }
         }
-        teamRobots.add(newTeam);
+        teams.add(newTeam);
     }
 
     // dismiss the team
@@ -86,6 +86,6 @@ public class Automail {
         ArrayList<IRobot> members = team.getMembers();
         // add each team member back to individual robot list
         individualRobots.addAll(members);
-        teamRobots.remove(team);
+        teams.remove(team);
     }
 }

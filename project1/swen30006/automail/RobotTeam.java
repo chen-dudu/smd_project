@@ -85,7 +85,7 @@ public class RobotTeam implements IRobot {
     public void addToTube(MailItem mailItem) { }
 
     /**
-     * returns all the robots in the team
+     * get all the robots in the team
      * @return an ArrayList of robots in the team
      */
     public ArrayList<IRobot> getMembers() {
