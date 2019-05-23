@@ -1,4 +1,4 @@
-package mycontroller;
+package mycontroller.adapters;
 
 /**
  * Team: W9-5
