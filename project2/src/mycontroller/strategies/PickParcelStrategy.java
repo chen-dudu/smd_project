@@ -19,7 +19,7 @@ public class PickParcelStrategy implements iStrategy{
 
     @Override
     public Coordinate getNextPosition(int fuel, Coordinate curr) {
-        return null;
+        return path.remove(0);
     }
 
     // TODO decide detail implementation
