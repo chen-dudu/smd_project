@@ -10,6 +10,10 @@ public class ControllerStrategyFactory {
 
     private ControllerStrategyFactory() {}
 
+    /**
+     * return an instance of the factory, create one if none exists
+     * @return an instance of the factory
+     */
     public static ControllerStrategyFactory getInstance() {
         if(factory == null) {
             factory = new ControllerStrategyFactory();
@@ -17,8 +21,8 @@ public class ControllerStrategyFactory {
         return factory;
     }
 
-    // TODO decide what the input is and the detail implementation
     public iControllerStrategy getStrategy() {
+        // TODO decide what the input is and the detail implementation
         return null;
     }
 

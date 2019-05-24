@@ -4,7 +4,7 @@ import tiles.MapTile;
 
 /**
  * Team: W9-5
- * Description: this is the adapter for map tile
+ * Description: this is the adapter class for map tile
  */
 public class MapTileAdapter implements iTileAdapter{
 

@@ -5,7 +5,7 @@ import tiles.TrapTile;
 
 /**
  * Team: W9-5
- * Description: this is the adapter for trap tile
+ * Description: this is the adapter class for trap tile
  */
 public class TrapTileAdapter implements iTileAdapter {
 

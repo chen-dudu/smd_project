@@ -8,5 +8,11 @@ import utilities.Coordinate;
  */
 public interface iControllerStrategy {
 
+    /**
+     * return the next position based on the current position and fuel left
+     * @param fuel the fuel the car has
+     * @param curr the current position of the car
+     * @return the position the car will move to
+     */
     Coordinate getNextPosition(int fuel, Coordinate curr);
 }

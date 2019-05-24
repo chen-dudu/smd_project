@@ -20,6 +20,7 @@ public class ExploreStrategy implements iControllerStrategy {
     private Integer[][] exploreMap;
 
     public ExploreStrategy() {
+        // init map
         exploreMap = new Integer[World.MAP_WIDTH][World.MAP_HEIGHT];
         for(int i = 0; i < exploreMap.length; i++) {
             for(int j = 0; j < exploreMap[i].length; j++) {
@@ -48,6 +49,7 @@ public class ExploreStrategy implements iControllerStrategy {
         }
     }
 
+    // return the positions next to the given point
     private ArrayList<Coordinate> getPosAround(Coordinate coor) {
         ArrayList<Coordinate> out = new ArrayList<>();
         out.add(new Coordinate(coor.x + 1, coor.y));
