@@ -69,8 +69,7 @@ public class Dijkstra implements iSearchStrategy {
 //                System.out.print(" |7 ");
             }
         }
-        ArrayList<Coordinate> path = reconstruct_path(came_from, start_coord, destination_coord);
-        this.path = path;
+        this.path = reconstruct_path(came_from, start_coord, destination_coord);
         System.out.print(" |OO ");
 //        HashMap<Coordinate, Coordinate> came_from_coordinate = new HashMap<>();
 //        for (Item item: came_from.keySet()){
@@ -182,7 +181,7 @@ public class Dijkstra implements iSearchStrategy {
         private Coordinate coordinate;
         private int priority;
 
-        public Item(Coordinate coordinate){
+        private Item(Coordinate coordinate){
             this.coordinate = coordinate;
         }
 
@@ -190,11 +189,7 @@ public class Dijkstra implements iSearchStrategy {
             return coordinate;
         }
 
-        public int getPriority(){
-            return priority;
-        }
-
-        public void setPriority(int priority){
+        private void setPriority(int priority){
             this.priority = priority;
         }
 
