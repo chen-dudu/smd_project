@@ -1,7 +1,10 @@
 package mycontroller.strategies;
 
+import tiles.MapTile;
 import utilities.Coordinate;
 import world.World;
+
+import java.util.*;
 
 /**
  * Team: W9-5
@@ -9,20 +12,34 @@ import world.World;
  */
 public class ExitStrategy implements iControllerStrategy {
 
-    private Integer[][] exitMap;
+    private HashMap<Coordinate, ArrayList<Coordinate>> exitMap;
+    private SearchStrategyFactory factory;
+    private iSearchStrategy strategy;
 
-    public ExitStrategy() {
-        exitMap = new Integer[World.MAP_WIDTH][World.MAP_HEIGHT];
+    public ExitStrategy(HashMap<Coordinate, MapTile> map, SearchAlgorithmType type, Coordinate finish) {
+        exitMap = new HashMap<> ();
+
         // TODO initilase exit map using search algorithm
+        factory = SearchStrategyFactory.getInstance();
+        strategy = factory.getStrategy(type);
+        for(Coordinate coor: map.keySet()) {
+            if (!map.get(coor).isType(MapTile.Type.WALL)) {
+                strategy.search(coor, finish, map);
+                exitMap.put(coor, strategy.getPath());
+            } else {
+                exitMap.put(coor, null);
+            }
+        }
+
     }
 
     @Override
     public Coordinate getNextPosition(int fuel, Coordinate curr) {
-        return null;
+        return exitMap.get(curr).remove(0);
     }
 
     // lookup the array, and return the dist to des
     public int getDistance(Coordinate coor) {
-        return exitMap[coor.x][coor.y];
+        return exitMap.get(coor).size();
     }
 }
