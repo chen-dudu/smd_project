@@ -2,7 +2,7 @@ package mycontroller.strategies;
 
 /**
  * Team: W9-5
- * Description:
+ * Description: this is the class representing all the possible types of a car
  */
 public enum CarState {
     EXPLORING,

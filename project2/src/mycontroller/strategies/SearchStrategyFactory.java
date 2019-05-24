@@ -10,6 +10,10 @@ public class SearchStrategyFactory {
 
     private SearchStrategyFactory() {}
 
+    /**
+     * return an instance of the factory, create one if none exists
+     * @return an instance of the factory
+     */
     public static SearchStrategyFactory getInstance() {
         if(factory == null) {
             factory = new SearchStrategyFactory();
@@ -17,11 +21,17 @@ public class SearchStrategyFactory {
         return factory;
     }
 
-    // TODO decide detail implementation, and input parameter
+    /**
+     * return a search algorithm with specified type
+     * @param type the type of the search algorithm to be returned
+     * @return a search algorithm with specified type
+     */
     public iSearchStrategy getStrategy(SearchAlgorithmType type) {
+        // TODO decide detail implementation, and input parameter, need more later on
         switch (type) {
             case Dijkstra:
                 return new Dijkstra();
         }
+        return null;
     }
 }

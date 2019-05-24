@@ -8,5 +8,10 @@ import tiles.MapTile;
  */
 public interface iTileAdapter {
 
+    /**
+     * return the type of the given tile
+     * @param tile the tile whose type is to be returned
+     * @return the type of the given type
+     */
     TileType getType(MapTile tile);
 }
