@@ -17,6 +17,11 @@ public class SearchStrategyFactory {
         return factory;
     }
 
-    // TODO decide detail implementation, and input
-    public iSearchStrategy getStrategy() { return null; }
+    // TODO decide detail implementation, and input parameter
+    public iSearchStrategy getStrategy(SearchAlgorithmType type) {
+        switch (type) {
+            case Dijkstra:
+                return new Dijkstra();
+        }
+    }
 }
