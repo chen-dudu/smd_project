@@ -15,6 +15,7 @@ public class Dijkstra implements iSearchStrategy {
     private ArrayList<Coordinate> wall;
     private ArrayList<Coordinate> path;
     private int cost;
+    private boolean found_path = false;
 
     public Dijkstra(){ }
 
@@ -36,46 +37,31 @@ public class Dijkstra implements iSearchStrategy {
         ArrayList<Item> neighbours;
         Iterator<Item> neighbours_iter;
         while (frontier.peek() != null) {
-//            System.out.print(" |0 ");
             current = frontier.poll();
-//            System.out.print(current.getCoordinate().toString());
-//            System.out.print(" |1 ");
             if (calculate_distance(current.getCoordinate(), destination_coord) == 0) {
+                found_path = true;
                 break;
             }
             neighbours = neighbours(current);
             neighbours_iter = neighbours.iterator();
-//            System.out.print(" |2 ");
             while (neighbours_iter.hasNext()) {
-//                System.out.print(" |3 ");
                 next = neighbours_iter.next();
-//                System.out.print(" |4 ");
                 new_cost = cost_so_far.get(current) + 1;
-//                System.out.print(" |5 ");
-
-//                contain = true;
-//                for (Item item: cost_so_far.keySet()) {
-//                    if (item.getCoordinate().x == next.getCoordinate().x && item.getCoordinate().y == next.getCoordinate().y){
-//                        contain = true;
-//                    }
-//                }
                 if (!cost_so_far.containsKey(next) || new_cost < cost_so_far.get(next)) {
-//                    System.out.print(" |6 ");
                     next.setPriority(new_cost);
                     cost_so_far.put(next, new_cost);
                     frontier.add(next);
                     came_from.put(next, current);
                 }
-//                System.out.print(" |7 ");
             }
         }
-        this.path = reconstruct_path(came_from, start_coord, destination_coord);
-        System.out.print(" |OO ");
-//        HashMap<Coordinate, Coordinate> came_from_coordinate = new HashMap<>();
-//        for (Item item: came_from.keySet()){
-//            came_from_coordinate.put(item.getCoordinate(), came_from.get(item).getCoordinate());
-//        }
-//        System.out.print(" |OO ");
+        if (found_path){
+            this.path = reconstruct_path(came_from, start_coord, destination_coord);
+        } else {
+            this.path = null;
+            this.cost = -1;
+        }
+
     }
 
     @Override
@@ -101,14 +87,12 @@ public class Dijkstra implements iSearchStrategy {
         while (!(calculate_distance(current, start) == 0)) {
             path.add(current);
             total_cost += 1;
-            System.out.println('(' + current.toString() + ')' + ' ');
             current_item = came_from.get(current_item);
             current = current_item.getCoordinate();
         }
         this.cost = total_cost;
         path.add(start);
         Collections.reverse(path);
-        System.out.println('a');
         for (Coordinate coordinate: path){
             System.out.println('(' + coordinate.toString() + ')' + ' ');
         }
