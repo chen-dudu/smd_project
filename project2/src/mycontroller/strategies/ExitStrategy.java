@@ -7,7 +7,7 @@ import world.World;
  * Team: W9-5
  * Description:
  */
-public class ExitStrategy implements iStrategy{
+public class ExitStrategy implements iControllerStrategy {
 
     private Integer[][] exitMap;
 

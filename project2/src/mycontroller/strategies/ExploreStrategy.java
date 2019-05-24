@@ -14,7 +14,7 @@ import java.util.Random;
  * Team: W9-5
  * Description:
  */
-public class ExploreStrategy implements iStrategy{
+public class ExploreStrategy implements iControllerStrategy {
 
     // 0 for not explored, 1 for yes
     private Integer[][] exploreMap;

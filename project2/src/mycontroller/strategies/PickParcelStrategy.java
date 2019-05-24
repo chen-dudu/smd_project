@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Team: W9-5
  * Description:
  */
-public class PickParcelStrategy implements iStrategy{
+public class PickParcelStrategy implements iControllerStrategy {
 
     // shortest path to the parcel
     private ArrayList<Coordinate> path;
