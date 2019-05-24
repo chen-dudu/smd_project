@@ -12,6 +12,8 @@ import utilities.Coordinate;
 import world.WorldSpatial;
 import mycontroller.adapters.AdapterFactory;
 import world.WorldSpatial.Direction;
+import mycontroller.strategies.Dijkstra;
+
 
 public class MyAutoController extends CarController{
 	// How many minimum units the wall is away from the player.
@@ -26,11 +28,10 @@ public class MyAutoController extends CarController{
 
 	public MyAutoController(Car car) {
 		super(car);
-		Coordinate start;
-		Coordinate destination;
+		Coordinate start = new Coordinate("0,0");
+		Coordinate destination = new Coordinate("0,0");
 
 		HashMap<Coordinate,MapTile> map = getMap();
-		ArrayList<Coordinate> wall = new ArrayList<>();
 		AdapterFactory factory = AdapterFactory.getInstance();
 		Dijkstra dijkstra = new Dijkstra();
 		MapTile tile;
@@ -38,18 +39,14 @@ public class MyAutoController extends CarController{
 			tile = map.get(coordinate);
 			if (factory.getAdapter(tile).getType(tile) == TileType.START) {
 				start = coordinate;
-				dijkstra.setStart_coordinate(start);
 			} else if (factory.getAdapter(tile).getType(tile) == TileType.FINISH) {
 				destination = coordinate;
-				dijkstra.setDestination_coordinate(destination);
-			} else if (factory.getAdapter(tile).getType(tile) == TileType.WALL){
-				wall.add(coordinate);
 			}
 		}
-		System.out.print(dijkstra.getStart_coordinate().toString());
-		System.out.print(dijkstra.getDestination_coordinate().toString());
-		dijkstra.setWall(wall);
-		this.path = dijkstra.run();
+		dijkstra.search(start, destination, map);
+		this.path = dijkstra.getPath();
+//		System.out.print(dijkstra.getStart_coordinate().toString());
+//		System.out.print(dijkstra.getDestination_coordinate().toString());
 
 		//			for (Coordinate coordinate: result.keySet()){
 		//				Coordinate c = result.get(coordinate);
