@@ -14,6 +14,7 @@ import java.util.*;
 public class Dijkstra implements iSearchStrategy {
     private ArrayList<Coordinate> wall;
     private ArrayList<Coordinate> path;
+    private int cost;
     private boolean found_path = false;
 
     public Dijkstra(){ }
