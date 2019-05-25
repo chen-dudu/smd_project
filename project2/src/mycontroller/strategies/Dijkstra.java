@@ -14,7 +14,6 @@ import java.util.*;
 public class Dijkstra implements iSearchStrategy {
     private ArrayList<Coordinate> wall;
     private ArrayList<Coordinate> path;
-    private int cost;
     private boolean found_path = false;
 
     public Dijkstra(){ }
@@ -81,22 +80,6 @@ public class Dijkstra implements iSearchStrategy {
         return path;
 
     }
-
-    /**
-     * @return return the cost computed by search of the path from start to destination
-     */
-    @Override
-    public int getCost() {
-        return cost;
-    }
-
-//    /**
-//     * @return return the path computed by search of the path from start to destination
-//     */
-//    @Override
-//    public ArrayList<Coordinate> getPath() {
-//        return path;
-//    }
 
     // came_from record each item and the place where it came from, this function reconstruct path from start to goal
     private ArrayList<Coordinate> reconstruct_path(HashMap<Item, Item> came_from,
