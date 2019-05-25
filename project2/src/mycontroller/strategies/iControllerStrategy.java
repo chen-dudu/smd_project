@@ -1,6 +1,9 @@
 package mycontroller.strategies;
 
+import tiles.MapTile;
 import utilities.Coordinate;
+
+import java.util.HashMap;
 
 /**
  * Team: W9-5
@@ -14,5 +17,7 @@ public interface iControllerStrategy {
      * @param curr the current position of the car
      * @return the position the car will move to
      */
-    Coordinate getNextPosition(int fuel, Coordinate curr);
+    Coordinate getNextPosition(float fuel, Coordinate curr, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld);
+
+    void updateMap(Coordinate currPos);
 }

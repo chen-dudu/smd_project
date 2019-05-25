@@ -1,5 +1,10 @@
 package mycontroller.strategies;
 
+import tiles.MapTile;
+import utilities.Coordinate;
+
+import java.util.HashMap;
+
 /**
  * Team: W9-5
  * Description: this is the singleton strategy factory class
@@ -21,8 +26,15 @@ public class ControllerStrategyFactory {
         return factory;
     }
 
-    public iControllerStrategy getStrategy() {
-        // TODO decide what the input is and the detail implementation
+    public iControllerStrategy getStrategy(CarState carState, HashMap<Coordinate, MapTile> map, SearchAlgorithmType type, Coordinate finish) {
+        switch (carState) {
+            case EXPLORING:
+                return new ExploreStrategy();
+            case EXITING:
+                return new ExitStrategy(map, type, finish);
+            case COLLECTING:
+                return new PickParcelStrategy(type, finish);
+        }
         return null;
     }
 

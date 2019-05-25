@@ -8,6 +8,7 @@ import mycontroller.adapters.AdapterFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Random;
 
 /**
@@ -16,25 +17,18 @@ import java.util.Random;
  */
 public class ExploreStrategy implements iControllerStrategy {
 
-    // 0 for not explored, 1 for yes
-    private Integer[][] exploreMap;
+
 
     public ExploreStrategy() {
-        // init map
-        exploreMap = new Integer[World.MAP_WIDTH][World.MAP_HEIGHT];
-        for(int i = 0; i < exploreMap.length; i++) {
-            for(int j = 0; j < exploreMap[i].length; j++) {
-                exploreMap[i][j] = 0;
-            }
-        }
+
     }
 
     @Override
-    public Coordinate getNextPosition(int fuel, Coordinate currPos) {
-        ArrayList<Coordinate> nextPos = getPosAround(currPos);
+    public Coordinate getNextPosition(float fuel, Coordinate currPos, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld) {
+        ArrayList<Coordinate> nextPos = getPosAround(currPos, map);
         ArrayList<Coordinate> unseenPos = new ArrayList<>();
         for(Coordinate next: nextPos) {
-            if(exploreMap[next.x][next.y] == 0) {
+            if(seenWorld[next.x][next.y] == 0) {
                 unseenPos.add(next);
             }
         }
@@ -49,31 +43,39 @@ public class ExploreStrategy implements iControllerStrategy {
         }
     }
 
+    @Override
+    public void updateMap(Coordinate currPos) {
+
+    }
+
     // return the positions next to the given point
-    private ArrayList<Coordinate> getPosAround(Coordinate coor) {
+    private ArrayList<Coordinate> getPosAround(Coordinate coor, HashMap<Coordinate, MapTile> map) {
         ArrayList<Coordinate> out = new ArrayList<>();
-        out.add(new Coordinate(coor.x + 1, coor.y));
-        out.add(new Coordinate(coor.x - 1, coor.y));
-        out.add(new Coordinate(coor.x, coor.y + 1));
-        out.add(new Coordinate(coor.x, coor.y - 1));
+        out.add(new Coordinate(coor.x + 2, coor.y));
+        out.add(new Coordinate(coor.x - 2, coor.y));
+        out.add(new Coordinate(coor.x, coor.y + 2));
+        out.add(new Coordinate(coor.x, coor.y - 2));
         // remove any invalid coors
-        for(Coordinate next: out) {
-            if(!isValidCoor(next)) {
-                out.remove(next);
+        ListIterator<Coordinate> i = out.listIterator(0);
+        while(i.hasNext()) {
+            Coordinate temp = i.next();
+            if(!isValidCoor(temp, map)) {
+                i.remove();
             }
         }
         return out;
     }
 
-    private boolean isValidCoor(Coordinate coor) {
+    private boolean isValidCoor(Coordinate coor, HashMap<Coordinate, MapTile> map) {
         return 0 <= coor.x && coor.x < World.MAP_WIDTH &&
-                0 <= coor.y && coor.y < World.MAP_HEIGHT;
+                0 <= coor.y && coor.y < World.MAP_HEIGHT &&
+                !map.get(coor).isType(MapTile.Type.WALL);
     }
 
     // 1 for explored and 0 for not
-    public boolean isExplored(Coordinate coor) {
-        return exploreMap[coor.x][coor.y] == 1;
-    }
+//    public boolean isExplored(Coordinate coor) {
+//        return exploreMap[coor.x][coor.y] == 1;
+//    }
 
     // TODO decide detail implementation, input parameter
     // v1. update for seen world
@@ -86,7 +88,7 @@ public class ExploreStrategy implements iControllerStrategy {
 //    }
 
     // v2. update for visited world
-//    public void updateMap(Coordinate currPos) {
+//    public void updateMap(Coordinate currPos, Integer[][] seenWorld) {
 //        if(exploreMap[currPos.x][currPos.y] == 0) {
 //            exploreMap[currPos.x][currPos.y] = 1;
 //        }

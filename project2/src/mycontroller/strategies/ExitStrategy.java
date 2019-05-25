@@ -33,8 +33,13 @@ public class ExitStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(int fuel, Coordinate curr) {
+    public Coordinate getNextPosition(float fuel, Coordinate curr, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld) {
         return exitMap.get(curr).remove(0);
+    }
+
+    @Override
+    public void updateMap(Coordinate currPos) {
+
     }
 
     // lookup the array, and return the dist to des
