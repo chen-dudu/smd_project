@@ -13,9 +13,10 @@ import java.util.*;
  */
 public class Dijkstra implements iSearchStrategy {
     private ArrayList<Coordinate> wall;
+    private ArrayList<Coordinate> lava;
     private ArrayList<Coordinate> path;
     private int cost;
-    private boolean found_path = false;
+    private boolean found_path;
 
     public Dijkstra(){ }
 
@@ -27,9 +28,9 @@ public class Dijkstra implements iSearchStrategy {
      */
     public ArrayList<Coordinate> search(Coordinate start_coord, Coordinate destination_coord,
                                         HashMap<Coordinate,MapTile> map) {
-        // use map to find all wall tiles and store it as wall
-        setWall(map);
         found_path = false;
+        // use map to find all wall, lava tiles and store it as wall, lava
+        setWall(map);
         Item start;
         Item current;
         Item next;
@@ -61,7 +62,7 @@ public class Dijkstra implements iSearchStrategy {
             neighbours_iter = neighbours.iterator();
             while (neighbours_iter.hasNext()) {
                 next = neighbours_iter.next();
-                new_cost = cost_so_far.get(current) + 1;
+                new_cost = cost_so_far.get(current) + getCost(next.coordinate);
                 if (!cost_so_far.containsKey(next) || new_cost < cost_so_far.get(next)) {
                     next.setPriority(new_cost);
                     cost_so_far.put(next, new_cost);
@@ -82,9 +83,17 @@ public class Dijkstra implements iSearchStrategy {
 
     }
 
+    private int getCost(Coordinate coordinate){
+        if (lava.contains(coordinate)){
+            return 2;
+        }
+        return 1;
+    }
+
+
     // came_from record each item and the place where it came from, this function reconstruct path from start to goal
     private ArrayList<Coordinate> reconstruct_path(HashMap<Item, Item> came_from,
-                                                  Coordinate start, Coordinate goal){
+                                                   Coordinate start, Coordinate goal){
         Item current_item;
         Item destination_item;
         Coordinate current;
@@ -120,6 +129,20 @@ public class Dijkstra implements iSearchStrategy {
             }
         }
         this.wall = wall;
+    }
+
+    // use map to find all wall tiles and store it as lava
+    private void setLava(HashMap<Coordinate,MapTile> map){
+        MapTile tile;
+        ArrayList<Coordinate> lava = new ArrayList<>();
+        AdapterFactory factory = AdapterFactory.getInstance();
+        for (Coordinate coordinate: map.keySet()){
+            tile = map.get(coordinate);
+            if (factory.getAdapter(tile).getType(tile) == TileType.LAVA){
+                lava.add(coordinate);
+            }
+        }
+        this.lava = lava;
     }
 
     // calculate the distance between to coordinates
