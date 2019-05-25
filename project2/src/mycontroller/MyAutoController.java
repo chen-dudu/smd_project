@@ -43,8 +43,7 @@ public class MyAutoController extends CarController{
 				destination = coordinate;
 			}
 		}
-		dijkstra.search(start, destination, map);
-		this.path = dijkstra.getPath();
+		this.path = dijkstra.search(start, destination, map);
 //		System.out.print(dijkstra.getStart_coordinate().toString());
 //		System.out.print(dijkstra.getDestination_coordinate().toString());
 

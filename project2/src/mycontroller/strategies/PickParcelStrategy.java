@@ -30,8 +30,7 @@ public class PickParcelStrategy implements iControllerStrategy {
 
     // TODO decide detail implementation
     public boolean reachable(HashMap<Coordinate, MapTile> map, Coordinate coor, Coordinate parcel) {
-        strategy.search(coor, parcel, map);
-        path = strategy.getPath();
+        path = strategy.search(coor, parcel, map);
         if (path == null) {
             return false;
         } else {

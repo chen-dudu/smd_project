@@ -24,8 +24,7 @@ public class ExitStrategy implements iControllerStrategy {
         strategy = factory.getStrategy(type);
         for(Coordinate coor: map.keySet()) {
             if (!map.get(coor).isType(MapTile.Type.WALL)) {
-                strategy.search(coor, finish, map);
-                exitMap.put(coor, strategy.getPath());
+                exitMap.put(coor, strategy.search(coor, finish, map));
             } else {
                 exitMap.put(coor, null);
             }
