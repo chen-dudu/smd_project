@@ -29,7 +29,7 @@ public class Dijkstra implements iSearchStrategy {
                                         HashMap<Coordinate,MapTile> map) {
         // use map to find all wall tiles and store it as wall
         setWall(map);
-
+        found_path = false;
         Item start;
         Item current;
         Item next;

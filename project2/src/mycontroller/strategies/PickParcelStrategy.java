@@ -16,19 +16,17 @@ public class PickParcelStrategy implements iControllerStrategy {
     private ArrayList<Coordinate> path;
     private iSearchStrategy strategy;
     private SearchStrategyFactory factory;
-    private Coordinate parcel;
 
 
     public PickParcelStrategy(SearchAlgorithmType type, Coordinate parcel) {
         path = new ArrayList<>();
         factory = SearchStrategyFactory.getInstance();
         strategy = factory.getStrategy(type);
-        this.parcel = parcel;
     }
 
     @Override
-    public Coordinate getNextPosition(float fuel, Coordinate curr, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld) {
-        path = strategy.search(curr, parcel, map);
+    public Coordinate getNextPosition(float fuel, Coordinate curr, Coordinate des, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld) {
+        path = strategy.search(curr, des, map);
         return path.remove(1);
     }
 

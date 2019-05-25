@@ -17,7 +17,7 @@ public interface iControllerStrategy {
      * @param curr the current position of the car
      * @return the position the car will move to
      */
-    Coordinate getNextPosition(float fuel, Coordinate curr, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld);
+    Coordinate getNextPosition(float fuel, Coordinate curr, Coordinate des, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld);
 
     void updateMap(Coordinate currPos);
 }

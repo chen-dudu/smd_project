@@ -33,8 +33,8 @@ public class ExitStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(float fuel, Coordinate curr, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld) {
-        return exitMap.get(curr).remove(0);
+    public Coordinate getNextPosition(float fuel, Coordinate curr, Coordinate des, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld) {
+        return exitMap.get(curr).remove(1);
     }
 
     @Override
