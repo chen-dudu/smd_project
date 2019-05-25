@@ -20,7 +20,7 @@ public interface iSearchStrategy {
      * @param des the position of the destination
      * @param map the map representing the world
      */
-    void search(Coordinate start, Coordinate des, HashMap<Coordinate, MapTile> map);
+    ArrayList<Coordinate> search(Coordinate start, Coordinate des, HashMap<Coordinate, MapTile> map);
 
     /**
      * return the cost to destination
@@ -28,9 +28,9 @@ public interface iSearchStrategy {
      */
     int getCost();
 
-    /**
-     * return the path to the destination found by the algorithm
-     * @returnn path found to destination
-     */
-    ArrayList<Coordinate> getPath();
+//    /**
+//     * return the path to the destination found by the algorithm
+//     * @returnn path found to destination
+//     */
+//    ArrayList<Coordinate> getPath();
 }

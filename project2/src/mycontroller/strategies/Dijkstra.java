@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * Team: W9-5
- * Description:
+ * Description: Dijkstra compute the shortest path from the start to destination
  */
 public class Dijkstra implements iSearchStrategy {
     private ArrayList<Coordinate> wall;
@@ -19,29 +19,44 @@ public class Dijkstra implements iSearchStrategy {
 
     public Dijkstra(){ }
 
-    public void search(Coordinate start_coord, Coordinate destination_coord, HashMap<Coordinate,MapTile> map) {
-        Item start = new Item(start_coord);
+    /**
+     * compute shortest path from start to destination, wall in map is taken in consideration
+     * @param start_coord
+     * @param destination_coord
+     * @param map
+     */
+    public ArrayList<Coordinate> search(Coordinate start_coord, Coordinate destination_coord,
+                                        HashMap<Coordinate,MapTile> map) {
+        // use map to find all wall tiles and store it as wall
         setWall(map);
-        start.setPriority(0);
+
+        Item start;
         Item current;
         Item next;
         int new_cost;
-//        boolean contain = false;
-
         PriorityQueue<Item> frontier = new PriorityQueue<>();
-        frontier.add(start);
         HashMap<Item, Item> came_from = new HashMap<>();
         HashMap<Item, Integer> cost_so_far = new HashMap<>();
-        came_from.put(start, null);
-        cost_so_far.put(start, 0);
         ArrayList<Item> neighbours;
         Iterator<Item> neighbours_iter;
+
+        start = new Item(start_coord);
+        start.setPriority(0);
+        frontier.add(start);
+        came_from.put(start, null);
+        cost_so_far.put(start, 0);
+
+        // while the priority queue is not empty, poll one item and process its neighbours
         while (frontier.peek() != null) {
             current = frontier.poll();
+
+            // break if find the shortest path and set found_path to ture
             if (calculate_distance(current.getCoordinate(), destination_coord) == 0) {
                 found_path = true;
                 break;
             }
+
+            // assign cost(priority) to each neighbour to current item
             neighbours = neighbours(current);
             neighbours_iter = neighbours.iterator();
             while (neighbours_iter.hasNext()) {
@@ -55,25 +70,35 @@ public class Dijkstra implements iSearchStrategy {
                 }
             }
         }
+
+        // reconstruct path if there is a path from start to destination
         if (found_path){
             this.path = reconstruct_path(came_from, start_coord, destination_coord);
         } else {
             this.path = null;
             this.cost = -1;
         }
+        return path;
 
     }
 
+    /**
+     * @return return the cost computed by search of the path from start to destination
+     */
     @Override
     public int getCost() {
         return cost;
     }
 
-    @Override
-    public ArrayList<Coordinate> getPath() {
-        return path;
-    }
+//    /**
+//     * @return return the path computed by search of the path from start to destination
+//     */
+//    @Override
+//    public ArrayList<Coordinate> getPath() {
+//        return path;
+//    }
 
+    // came_from record each item and the place where it came from, this function reconstruct path from start to goal
     private ArrayList<Coordinate> reconstruct_path(HashMap<Item, Item> came_from,
                                                   Coordinate start, Coordinate goal){
         Item current_item;
@@ -93,12 +118,13 @@ public class Dijkstra implements iSearchStrategy {
         this.cost = total_cost;
         path.add(start);
         Collections.reverse(path);
-        for (Coordinate coordinate: path){
-            System.out.println('(' + coordinate.toString() + ')' + ' ');
-        }
+//        for (Coordinate coordinate: path){
+//            System.out.println('(' + coordinate.toString() + ')' + ' ');
+//        }
         return path;
     }
 
+    // use map to find all wall tiles and store it as wall
     private void setWall(HashMap<Coordinate,MapTile> map){
         MapTile tile;
         ArrayList<Coordinate> wall = new ArrayList<>();
@@ -112,12 +138,14 @@ public class Dijkstra implements iSearchStrategy {
         this.wall = wall;
     }
 
+    // calculate the distance between to coordinates
     private int calculate_distance(Coordinate coordinate, Coordinate destination) {
         int dx = Math.abs(coordinate.x - destination.x);
         int dy = Math.abs(coordinate.y - destination.y);
         return dx + dy;
     }
 
+    // find all neighbour items of the item
     private ArrayList<Item> neighbours(Item item){
         ArrayList<Item> neighbours = new ArrayList<>();
         int new_x;
@@ -161,6 +189,7 @@ public class Dijkstra implements iSearchStrategy {
         return neighbours;
     }
 
+    // Item contains coordinate and priority of this item
     class Item implements Comparable<Item> {
         private Coordinate coordinate;
         private int priority;
@@ -173,6 +202,7 @@ public class Dijkstra implements iSearchStrategy {
             return coordinate;
         }
 
+        // set the priority for priority queue to compare
         private void setPriority(int priority){
             this.priority = priority;
         }
@@ -182,6 +212,9 @@ public class Dijkstra implements iSearchStrategy {
             return this.priority - other.priority;
         }
 
+        /**
+         * Defined in order to use it as keys in a hashmap
+         */
         public boolean equals(Object i){
             if(i == this){
                 return true;
