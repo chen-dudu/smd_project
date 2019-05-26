@@ -47,7 +47,7 @@ public class MyAutoController extends CarController{
 	private Coordinate prevPos;
 	private float threshold;
 
-	private HashMap<TileType, Integer> costTable;
+	private HashMap<TileType, Integer> costTable = new HashMap<>();
 	private Simulation.StrategyMode mode;
 
 	public MyAutoController(Car car) {
@@ -151,12 +151,12 @@ public class MyAutoController extends CarController{
 		}
 
 		if(mode == Simulation.StrategyMode.HEALTH) {
-			if(getHealth() < threshold) {
+			if(getHealth() <= threshold) {
 				updateState(CarState.HEALING);
 			}
 		}
 		else if(mode == Simulation.StrategyMode.FUEL) {
-			if(fuel < threshold) {
+			if(fuel <= threshold) {
 				updateState(CarState.EXITING);
 			}
 		}
