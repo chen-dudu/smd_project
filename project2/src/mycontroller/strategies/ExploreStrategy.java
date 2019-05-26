@@ -68,7 +68,8 @@ public class ExploreStrategy implements iControllerStrategy {
                 for(int j = 0; j < seenWorld[i].length; j++) {
                     if (seenWorld[i][j] == 0) {
                         temp = new Coordinate(j, i);
-                        if ((currDist = manhattan_dist(currPos, temp)) < minDist) {
+                        if ((currDist = manhattan_dist(currPos, temp)) < minDist &&
+                                SearchStrategyFactory.getInstance().getStrategy(SearchAlgorithmType.Dijkstra).search(currPos, temp, map) != null) {
 //                            System.out.println("&&&&&&&&&&&&&&&&&&&");
                             minDist = currDist;
                             bestChoice = temp;
