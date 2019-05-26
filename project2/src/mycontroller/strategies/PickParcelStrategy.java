@@ -27,7 +27,7 @@ public class PickParcelStrategy implements iControllerStrategy {
     @Override
     public Coordinate getNextPosition(float fuel, Coordinate curr, Coordinate des, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld) {
         path = strategy.search(curr, des, map);
-        return path.remove(1);
+        return path.get(1);
     }
 
     @Override

@@ -80,7 +80,7 @@ public class ExploreStrategy implements iControllerStrategy {
             }
             System.out.println("best >>>>>>> " + bestChoice);
             if(currPos.equals(bestChoice)) {
-                return bestChoice;
+                return currPos;
             }
             return SearchStrategyFactory.getInstance().getStrategy(SearchAlgorithmType.Dijkstra).search(currPos, bestChoice, map).get(1);
         }

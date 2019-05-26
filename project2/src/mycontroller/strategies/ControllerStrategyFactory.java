@@ -34,6 +34,8 @@ public class ControllerStrategyFactory {
                 return new ExitStrategy(map, type, finish);
             case COLLECTING:
                 return new PickParcelStrategy(type, finish);
+            case HEALING:
+                return new HealStrategy();
         }
         return null;
     }
