@@ -31,6 +31,8 @@ public class Dijkstra implements iSearchStrategy {
         found_path = false;
         // use map to find all wall, lava tiles and store it as wall, lava
         setWall(map);
+        setLava(map);
+
         Item start;
         Item current;
         Item next;
@@ -84,8 +86,10 @@ public class Dijkstra implements iSearchStrategy {
     }
 
     private int getCost(Coordinate coordinate){
-        if (lava.contains(coordinate)){
-            return 2;
+        if (!lava.isEmpty()){
+            if (lava.contains(coordinate)){
+                return 2;
+            }
         }
         return 1;
     }
