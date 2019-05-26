@@ -13,25 +13,44 @@ import java.util.*;
  */
 public class Dijkstra implements iSearchStrategy {
     private ArrayList<Coordinate> wall;
-    private ArrayList<Coordinate> lava;
-    private ArrayList<Coordinate> path;
-    private int cost;
-    private boolean found_path;
+    private HashMap<Coordinate, MapTile> map;
+    private HashMap<TileType, Integer> costTable;
 
     public Dijkstra(){ }
 
     /**
      * compute shortest path from start to destination, wall in map is taken in consideration
      * @param start_coord
-     * @param destination_coord
+     * @param destination_coords
      * @param map
      */
-    public ArrayList<Coordinate> search(Coordinate start_coord, Coordinate destination_coord,
-                                        HashMap<Coordinate,MapTile> map) {
+
+    public ArrayList<Coordinate> search(Coordinate start_coord, ArrayList<Coordinate> destination_coords,
+                                        HashMap<Coordinate,MapTile> map, HashMap<TileType, Integer> costTable) {
+        this.map = map;
+        this.costTable = costTable;
+        ArrayList<Coordinate> best_path;
+        ArrayList<Coordinate> result;
+        best_path = null;
+        for (Coordinate destination: destination_coords){
+            result = run(start_coord, destination, map);
+            if (best_path == null) {
+                best_path = result;
+            } else if (!(result == null)){
+                if (result.size() < best_path.size()){
+                    best_path = result;
+                }
+            }
+        }
+        return best_path;
+    }
+
+    private ArrayList<Coordinate> run(Coordinate start_coord, Coordinate destination_coord,
+                                      HashMap<Coordinate,MapTile> map) {
+        boolean found_path;
         found_path = false;
         // use map to find all wall, lava tiles and store it as wall, lava
         setWall(map);
-        setLava(map);
 
         Item start;
         Item current;
@@ -75,23 +94,27 @@ public class Dijkstra implements iSearchStrategy {
         }
 
         // reconstruct path if there is a path from start to destination
+        ArrayList<Coordinate> path;
         if (found_path){
-            this.path = reconstruct_path(came_from, start_coord, destination_coord);
+            path = reconstruct_path(came_from, start_coord, destination_coord);
         } else {
-            this.path = null;
-            this.cost = -1;
+            path = null;
         }
         return path;
 
     }
 
     private int getCost(Coordinate coordinate){
-        if (!lava.isEmpty()){
-            if (lava.contains(coordinate)){
-                return 2;
-            }
+        MapTile tile;
+        TileType tileType;
+        AdapterFactory factory = AdapterFactory.getInstance();
+        tile = map.get(coordinate);
+        tileType = factory.getAdapter(tile).getType(tile);
+        int cost = 1;
+        if (costTable.keySet().contains(tileType)){
+            cost = costTable.get(factory.getAdapter(tile).getType(tile));
         }
-        return 1;
+        return cost;
     }
 
 
@@ -105,19 +128,13 @@ public class Dijkstra implements iSearchStrategy {
         current = goal;
         current_item = destination_item;
         ArrayList<Coordinate> path = new ArrayList<>();
-        int total_cost = 0;
         while (!(calculate_distance(current, start) == 0)) {
             path.add(current);
-            total_cost += 1;
             current_item = came_from.get(current_item);
             current = current_item.getCoordinate();
         }
-        this.cost = total_cost;
         path.add(start);
         Collections.reverse(path);
-//        for (Coordinate coordinate: path){
-//            System.out.println('(' + coordinate.toString() + ')' + ' ');
-//        }
         return path;
     }
 
@@ -133,20 +150,6 @@ public class Dijkstra implements iSearchStrategy {
             }
         }
         this.wall = wall;
-    }
-
-    // use map to find all wall tiles and store it as lava
-    private void setLava(HashMap<Coordinate,MapTile> map){
-        MapTile tile;
-        ArrayList<Coordinate> lava = new ArrayList<>();
-        AdapterFactory factory = AdapterFactory.getInstance();
-        for (Coordinate coordinate: map.keySet()){
-            tile = map.get(coordinate);
-            if (factory.getAdapter(tile).getType(tile) == TileType.LAVA){
-                lava.add(coordinate);
-            }
-        }
-        this.lava = lava;
     }
 
     // calculate the distance between to coordinates
@@ -168,7 +171,7 @@ public class Dijkstra implements iSearchStrategy {
         new_x = coordinate.x + 1;
         new_y = coordinate.y;
         new_coordinate = new Coordinate(new_x + "," + new_y);
-        if (!wall.contains(new_coordinate)){
+        if (!wall.contains(new_coordinate) && map.keySet().contains(new_coordinate)){
             new_item = new Item(new_coordinate);
             neighbours.add(new_item);
         }
@@ -176,7 +179,7 @@ public class Dijkstra implements iSearchStrategy {
         new_x = coordinate.x;
         new_y = coordinate.y + -1;
         new_coordinate = new Coordinate(new_x + "," + new_y);
-        if (!wall.contains(new_coordinate)){
+        if (!wall.contains(new_coordinate) && map.keySet().contains(new_coordinate)){
             new_item = new Item(new_coordinate);
             neighbours.add(new_item);
         }
@@ -184,7 +187,7 @@ public class Dijkstra implements iSearchStrategy {
         new_x = coordinate.x;
         new_y = coordinate.y + 1;
         new_coordinate = new Coordinate(new_x + "," + new_y);
-        if (!wall.contains(new_coordinate)){
+        if (!wall.contains(new_coordinate) && map.keySet().contains(new_coordinate)){
             new_item = new Item(new_coordinate);
             neighbours.add(new_item);
         }
@@ -192,7 +195,7 @@ public class Dijkstra implements iSearchStrategy {
         new_x = coordinate.x + -1;
         new_y = coordinate.y;
         new_coordinate = new Coordinate(new_x + "," + new_y);
-        if (!wall.contains(new_coordinate)){
+        if (!wall.contains(new_coordinate) && map.keySet().contains(new_coordinate)){
             new_item = new Item(new_coordinate);
             neighbours.add(new_item);
         }
