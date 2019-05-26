@@ -3,7 +3,6 @@ package mycontroller;
 import controller.CarController;
 import mycontroller.strategies.CarState;
 import mycontroller.strategies.ControllerStrategyFactory;
-import sun.plugin.dom.core.CoreConstants;
 import tiles.MapTile;
 import utilities.Coordinate;
 import world.Car;
@@ -15,6 +14,7 @@ import mycontroller.adapters.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Arrays;
 
 public class MyAutoController extends CarController{
 	// How many minimum units the wall is away from the player.
@@ -59,7 +59,9 @@ public class MyAutoController extends CarController{
 
 		controllerStrategies.put(state, strategyFactory.getStrategy(state, getMap(), SearchAlgorithmType.Dijkstra, destinations.get(0)));
 		controllerStrategies.get(state).updateMap(new Coordinate(getPosition()));
-		exploreMap = new Integer[World.MAP_WIDTH][World.MAP_HEIGHT];
+
+		exploreMap = new Integer[World.MAP_HEIGHT][World.MAP_WIDTH];
+
 		for(int i = 0; i < exploreMap.length; i++) {
 			for(int j = 0; j < exploreMap[i].length; j++) {
 				exploreMap[i][j] = 0;
@@ -67,10 +69,13 @@ public class MyAutoController extends CarController{
 		}
 		for(Coordinate next: emptyMap.keySet()) {
 			if(emptyMap.get(next).isType(MapTile.Type.WALL)) {
-				System.out.println(next);
-				exploreMap[next.x][next.y] = 1;
+//				System.out.println(next);
+				exploreMap[next.y][next.x] = 1;
 			}
 		}
+
+//		printMap(exploreMap);
+
 		parcelPos = null;
 		turn = 0;
 		prevPos = null;
@@ -81,6 +86,8 @@ public class MyAutoController extends CarController{
 	@Override
 	public void update() {
 
+		printMap(exploreMap);
+
 //		System.out.println(">>>>>>>>>>>>>>>>" + exploreMap[0][0]);
 		turn++;
 		System.out.println(World.MAP_WIDTH + " -- " + World.MAP_HEIGHT);
@@ -90,7 +97,7 @@ public class MyAutoController extends CarController{
 		for(Coordinate next: map.keySet()) {
 			if(0 <= next.x && next.x < World.MAP_WIDTH &&
 					0 <= next.y && next.y < World.MAP_HEIGHT) {
-				exploreMap[next.x][next.y] = 1;
+				exploreMap[next.y][next.x] = 1;
 			}
 		}
 
@@ -114,7 +121,7 @@ public class MyAutoController extends CarController{
 		}
 
 		if(currPos.equals(parcelPos)) {
-			System.out.println("~~~~~~~~~`");
+//			System.out.println("~~~~~~~~~");
 			parcelPos = null;
 			updateState(CarState.EXPLORING);
 		}
@@ -134,7 +141,21 @@ public class MyAutoController extends CarController{
 			}
 		}
 
-		Coordinate nextPos = controllerStrategies.get(state).getNextPosition(fuel, currPos, parcelPos, getMap(), exploreMap);
+		Coordinate nextPos;
+		if(state == CarState.COLLECTING) {
+			PickParcelStrategy temp = (PickParcelStrategy) controllerStrategies.get(state);
+			if(temp.reachable(getMap(), currPos, parcelPos)) {
+				nextPos = temp.getNextPosition(fuel, currPos, parcelPos, getMap(), exploreMap);
+			}
+			else {
+				updateState(CarState.EXPLORING);
+				nextPos = controllerStrategies.get(state).getNextPosition(fuel, currPos, parcelPos, getMap(), exploreMap);
+			}
+		}
+		else {
+			nextPos = controllerStrategies.get(state).getNextPosition(fuel, currPos, parcelPos, getMap(), exploreMap);
+		}
+
 
 		System.out.print(currPos + " -> " + nextPos);
 		System.out.println();
@@ -147,8 +168,25 @@ public class MyAutoController extends CarController{
 		}
 		prevPos = currPos;
 		controllerStrategies.get(state).updateMap(currPos);
-		System.out.println(state);
+//		System.out.println(state);
 		fuel--;
+	}
+
+	private void printMap(Integer[][] map) {
+//		for(int i = map.length - 1; i >= 0; i--) {
+//			System.out.println(Arrays.toString(map[i]));
+//		}
+		for(int i = map.length - 1; i >= 0; i--) {
+			for(int j = 0; j < map[i].length; j++) {
+				if(map[i][j] == 1) {
+					System.out.print(map[i][j] + ", ");
+				}
+				else if(map[i][j] == 0) {
+					System.out.print(" , ");
+				}
+			}
+			System.out.println("");
+		}
 	}
 
 	private void updateState(CarState state) {

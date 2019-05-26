@@ -25,12 +25,19 @@ public class ExploreStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(float fuel, Coordinate currPos, Coordinate des, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld) {
-        System.out.println("~~~~~~~~~`");
+    public Coordinate getNextPosition(float fuel, Coordinate currPos, Coordinate goal, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld) {
+//        System.out.println("~~~~~~~~~`");
+        Coordinate des = null;
+        for(Coordinate next: map.keySet()) {
+            if(map.get(next).isType(MapTile.Type.FINISH)) {
+                des = next;
+                break;
+            }
+        }
         ArrayList<Coordinate> nextPos = getPosAround(currPos, map);
         ArrayList<Coordinate> unseenPos = new ArrayList<>();
         for(Coordinate next: nextPos) {
-            if(seenWorld[next.x][next.y] == 0) {
+            if(seenWorld[next.y][next.x] == 0) {
                 unseenPos.add(next);
             }
         }
@@ -43,16 +50,26 @@ public class ExploreStrategy implements iControllerStrategy {
             // all next pos seen, randomly choose one
 //            return nextPos.get(rand.nextInt(nextPos.size()));
             System.out.println("all seennnnnnn");
-            Coordinate temp = new Coordinate(3, 5);
-            int minDist = manhattan_dist(currPos, temp);
+//            Coordinate temp = new Coordinate(3, 5);
+//            int minDist = manhattan_dist(currPos, des);
+            Coordinate temp = null;
+            for(int i = 0; i < seenWorld.length; i++) {
+                for(int j = 0; j < seenWorld[i].length; j++) {
+                    if(seenWorld[i][j] == 0) {
+                        temp = new Coordinate(j, i);
+                        break;
+                    }
+                }
+            }
             int currDist;
             Coordinate bestChoice = temp;
+            int minDist = manhattan_dist(currPos, temp);
             for(int i = 0; i < seenWorld.length; i++) {
                 for(int j = 0; j < seenWorld[i].length; j++) {
                     if (seenWorld[i][j] == 0) {
-                        temp = new Coordinate(i, j);
+                        temp = new Coordinate(j, i);
                         if ((currDist = manhattan_dist(currPos, temp)) < minDist) {
-                            System.out.println("&&&&&&&&&&&&&&&&&&&");
+//                            System.out.println("&&&&&&&&&&&&&&&&&&&");
                             minDist = currDist;
                             bestChoice = temp;
 //                            System.out.println(bestChoice);
