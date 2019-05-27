@@ -9,14 +9,24 @@ import java.util.HashMap;
 
 /**
  * Team: W9-5
- * Description:
+ * Description: this is the class representing the parcel
+ *              collecting strategy used by our autoController
  */
 public class PickParcelStrategy implements iControllerStrategy {
 
+    /*
+    search algorithm that will be used for finding
+    the best path leading to a parcel
+     */
     private iSearchStrategy strategy;
-    private ArrayList<Coordinate> des;
+    // the path cost for different types of tiles
     private HashMap<TileType, Integer> pathCost;
 
+    /**
+     * create a new parcel collecting strategy
+     * @param type the type of search algorithm to be used for searching
+     * @param pathCost the path cost for different types of tiles
+     */
     public PickParcelStrategy(SearchAlgorithmType type, HashMap<TileType, Integer> pathCost) {
         strategy = SearchStrategyFactory.getInstance().getStrategy(type);
         this.pathCost = pathCost;
@@ -28,6 +38,13 @@ public class PickParcelStrategy implements iControllerStrategy {
         return strategy.search(curr, des, map, pathCost).get(1);
     }
 
+    /**
+     * check if parcels are accessible
+     * @param map the map representing the world
+     * @param currPos the coordinate of current position
+     * @param parcels coordinate(s) of parcel(s)
+     * @return true if parcels are accessible, false otherwise
+     */
     public boolean reachable(HashMap<Coordinate, MapTile> map, Coordinate currPos,
                              ArrayList<Coordinate> parcels) {
         return strategy.search(currPos, parcels, map, pathCost) != null;

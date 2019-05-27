@@ -16,8 +16,10 @@ public interface iSearchStrategy {
     /**
      * ask search algorithm to do a search
      * @param start the position of the starting point
-     * @param des the position of the destination
+     * @param des the positions of the destination
      * @param map the map representing the world
+     * @param pathCost a hashmap storing path cost for different types of tiles
+     * @return the shortest path
      */
     ArrayList<Coordinate> search(Coordinate start, ArrayList<Coordinate> des,
                                  HashMap<Coordinate, MapTile> map,

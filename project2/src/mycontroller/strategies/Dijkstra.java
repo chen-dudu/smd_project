@@ -112,8 +112,6 @@ public class Dijkstra implements iSearchStrategy {
         } else {
             path = null;
         }
-        System.out.println(destination_coord);
-        System.out.println(path);
         return path;
 
     }

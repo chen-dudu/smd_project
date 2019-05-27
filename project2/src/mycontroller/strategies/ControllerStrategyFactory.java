@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 /**
  * Team: W9-5
- * Description: this is the singleton strategy factory class
+ * Description: this is the singleton controller strategy factory class
  */
 public class ControllerStrategyFactory {
 
@@ -28,20 +28,28 @@ public class ControllerStrategyFactory {
         return factory;
     }
 
+    /**
+     * return a controller strategy with the specified type
+     * @param carState the type of controller strategy to be returned
+     * @param map the map representing the world
+     * @param type type of search algorithm to use
+     * @param goals the destinations for search algorithm
+     * @param pathCost the path cost for different types of tiles
+     * @return a controller strategy with specified type
+     */
     public iControllerStrategy getStrategy(CarState carState, HashMap<Coordinate, MapTile> map,
                                            SearchAlgorithmType type, ArrayList<Coordinate> goals,
                                            HashMap<TileType, Integer> pathCost) {
         switch (carState) {
             case EXPLORING:
-                return new ExploreStrategy(pathCost);
+                return new ExploreStrategy(type, pathCost);
             case EXITING:
-                return new ExitStrategy(map, type, goals, pathCost);
+                return new ExitStrategy(type, pathCost);
             case COLLECTING:
                 return new PickParcelStrategy(type, pathCost);
             case HEALING:
-                return new HealStrategy(pathCost);
+                return new HealStrategy(type, pathCost);
         }
         return null;
     }
-
 }

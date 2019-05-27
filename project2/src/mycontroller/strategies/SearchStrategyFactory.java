@@ -2,7 +2,7 @@ package mycontroller.strategies;
 
 /**
  * Team: W9-5
- * Description:
+ * Description: this is the singleton search algorithm factory class
  */
 public class SearchStrategyFactory {
 
@@ -27,7 +27,6 @@ public class SearchStrategyFactory {
      * @return a search algorithm with specified type
      */
     public iSearchStrategy getStrategy(SearchAlgorithmType type) {
-        // TODO decide detail implementation, and input parameter, need more later on
         switch (type) {
             case Dijkstra:
                 return new Dijkstra();

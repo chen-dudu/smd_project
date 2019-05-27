@@ -1,7 +1,5 @@
 package mycontroller.strategies;
 
-import jdk.nashorn.internal.runtime.regexp.joni.SearchAlgorithm;
-import mycontroller.adapters.AdapterFactory;
 import mycontroller.adapters.TileType;
 import tiles.MapTile;
 import utilities.Coordinate;
@@ -10,55 +8,31 @@ import java.util.*;
 
 /**
  * Team: W9-5
- * Description:
+ * Description: this is the class representing the exit strategy used by our autoController
  */
 public class ExitStrategy implements iControllerStrategy {
 
-//    private HashMap<Coordinate, ArrayList<Coordinate>> exitMap;
-
+    /*
+    search algorithm that will be used for finding
+    the best path leading to a parcel
+     */
+    private iSearchStrategy searchAlg;
+    // the path cost for different types of tiles
     private HashMap<TileType, Integer> pathCost;
 
-    public ExitStrategy(HashMap<Coordinate, MapTile> map, SearchAlgorithmType type,
-                        ArrayList<Coordinate> finish, HashMap<TileType, Integer> pathCost) {
+    /**
+     * create a new exit strategy
+     * @param type the type of search algorithm to be used for searching
+     * @param pathCost the path cost for different types of tiles
+     */
+    public ExitStrategy(SearchAlgorithmType type, HashMap<TileType, Integer> pathCost) {
+        searchAlg = SearchStrategyFactory.getInstance().getStrategy(type);
         this.pathCost = pathCost;
-//        exitMap = new HashMap<> ();
-//        iSearchStrategy strategy = SearchStrategyFactory.getInstance().getStrategy(type);
-
-//        AdapterFactory factory = AdapterFactory.getInstance();
-
-//        for(Coordinate next: finish) {
-//            System.out.println(next);
-//        }
-
-        System.out.println(" ?? " + finish.size() + " ??");
-
-//        for(Coordinate next: map.keySet()) {
-//            MapTile tile = map.get(next);
-//            if(factory.getAdapter(tile).getType(tile) != TileType.WALL) {
-////            if (!map.get(coor).isType(MapTile.Type.WALL)) {
-//                exitMap.put(next, strategy.search(next, finish, map, pathCost));
-////                if(exitMap.get(next) == null) {
-////                    System.out.println("::::::::");
-////                }
-//            } else {
-//                exitMap.put(next, null);
-//            }
-//        }
     }
 
     @Override
     public Coordinate getNextPosition(float fuel, Coordinate curr, ArrayList<Coordinate> des,
                                       HashMap<Coordinate, MapTile> map, int[][] seenWorld) {
-        iSearchStrategy searchAlg = SearchStrategyFactory.getInstance().getStrategy(SearchAlgorithmType.Dijkstra);
         return searchAlg.search(curr, des, map, pathCost).get(1);
-//        if(exitMap.get(curr) == null) {
-//            System.out.println("NULL >>>>>>>");
-//        }
-//        return exitMap.get(curr).get(1);
     }
-
-    // lookup the array, and return the dist to des
-//    public int getDistance(Coordinate coor) {
-//        return exitMap.get(coor).size();
-//    }
 }

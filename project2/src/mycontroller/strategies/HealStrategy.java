@@ -10,32 +10,32 @@ import java.util.HashMap;
 
 /**
  * Team: W9-5
- * Description:
+ * Description: this is the class representing the healing strategy used by our autoController
  */
 public class HealStrategy implements iControllerStrategy {
 
+    /*
+    search algorithm that will be used for finding
+    the best path leading to a parcel
+     */
+    private iSearchStrategy searchAlg;
+    // the path cost for different types of tiles
     private HashMap<TileType, Integer> pathCost;
 
-    public HealStrategy(HashMap<TileType, Integer> pathCost) {
+    /**
+     * create a new healing strategy
+     * @param type the type of search algorithm to be used for searching
+     * @param pathCost the path cost for different types of tiles
+     */
+    public HealStrategy(SearchAlgorithmType type, HashMap<TileType, Integer> pathCost) {
+        searchAlg = SearchStrategyFactory.getInstance().getStrategy(type);
         this.pathCost = pathCost;
     }
 
     @Override
     public Coordinate getNextPosition(float fuel, Coordinate currPos, ArrayList<Coordinate> goal, HashMap<Coordinate, MapTile> map, int[][] seenWorld) {
-        iSearchStrategy searchAlg = SearchStrategyFactory.getInstance().getStrategy(SearchAlgorithmType.Dijkstra);
         ArrayList<Coordinate> healths = getHealth(map);
         return searchAlg.search(currPos, healths, map, pathCost).get(1);
-//        Coordinate closestHealth = healths.get(0);
-//        int minDist = searchAlg.search(currPos, closestHealth, map, pathCost).size();
-//        ArrayList<Coordinate> currPath;
-//        for(Coordinate next: healths) {
-//            currPath = searchAlg.search(currPos, next, map, pathCost);
-//            if(currPath.size() < minDist) {
-//                minDist = currPath.size();
-//                closestHealth = currPath.get(1);
-//            }
-//        }
-//        return closestHealth;
     }
 
     // find all health tile in the explored map
