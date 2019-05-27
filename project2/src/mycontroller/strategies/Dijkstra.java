@@ -27,6 +27,14 @@ public class Dijkstra implements iSearchStrategy {
 
     public ArrayList<Coordinate> search(Coordinate start_coord, ArrayList<Coordinate> destination_coords,
                                         HashMap<Coordinate,MapTile> map, HashMap<TileType, Integer> costTable) {
+        for (Coordinate c: destination_coords){
+            if (start_coord.equals(c)){
+                ArrayList<Coordinate> path_r = new ArrayList<>();
+                path_r.add(c);
+                path_r.add(c);
+                return path_r;
+            }
+        }
         this.map = map;
         this.costTable = costTable;
 
