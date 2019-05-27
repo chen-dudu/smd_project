@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * Team: W9-5
- * Description: Dijkstra compute the shortest path from the start to destination
+ * Description: Dijkstra compute the shortest path from the start to destinations
  */
 public class Dijkstra implements iSearchStrategy {
     private ArrayList<Coordinate> wall;
@@ -19,14 +19,17 @@ public class Dijkstra implements iSearchStrategy {
     public Dijkstra(){ }
 
     /**
-     * compute shortest path from start to destination, wall in map is taken in consideration
-     * @param start_coord
-     * @param destination_coords
-     * @param map
+     * compute shortest path from start to one of the destination of destinations, types of tiles in map is taken in
+     * consideration
+     * @param start_coord the start coordination
+     * @param destination_coords an ArrayList of destination
+     * @param map the up-to-date map
+     * return an ArrayList of coordinates, which is the shortest path from start to one of the destinations
      */
-
     public ArrayList<Coordinate> search(Coordinate start_coord, ArrayList<Coordinate> destination_coords,
                                         HashMap<Coordinate,MapTile> map, HashMap<TileType, Integer> costTable) {
+
+        // return path as ArrayList of [start, start] when start coordinate exist in destinations
         for (Coordinate c: destination_coords){
             if (start_coord.equals(c)){
                 ArrayList<Coordinate> path_r = new ArrayList<>();
@@ -35,6 +38,8 @@ public class Dijkstra implements iSearchStrategy {
                 return path_r;
             }
         }
+
+        // update map and costTable
         this.map = map;
         this.costTable = costTable;
 
@@ -42,9 +47,11 @@ public class Dijkstra implements iSearchStrategy {
         int num_found = 0;
         boolean found_path;
         found_path = false;
-        // use map to find all wall, lava tiles and store it as wall, lava
+
+        // use map to find all wall tiles and store it as wall
         setWall(map);
 
+        // initialize variables
         Item start;
         Item current;
         Item next;
@@ -55,6 +62,7 @@ public class Dijkstra implements iSearchStrategy {
         ArrayList<Item> neighbours;
         Iterator<Item> neighbours_iter;
 
+        // put start item in priority queue
         start = new Item(start_coord);
         start.setPriority(0);
         frontier.add(start);
@@ -110,6 +118,7 @@ public class Dijkstra implements iSearchStrategy {
 
     }
 
+    // use costTable to get cost according to the tile type
     private int getCost(Coordinate coordinate){
         MapTile tile;
         TileType tileType;
