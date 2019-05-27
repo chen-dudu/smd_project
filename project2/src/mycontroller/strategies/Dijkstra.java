@@ -29,24 +29,9 @@ public class Dijkstra implements iSearchStrategy {
                                         HashMap<Coordinate,MapTile> map, HashMap<TileType, Integer> costTable) {
         this.map = map;
         this.costTable = costTable;
-        ArrayList<Coordinate> best_path;
-        ArrayList<Coordinate> result;
-        best_path = null;
-        for (Coordinate destination: destination_coords){
-            result = run(start_coord, destination, map);
-            if (best_path == null) {
-                best_path = result;
-            } else if (!(result == null)){
-                if (result.size() < best_path.size()){
-                    best_path = result;
-                }
-            }
-        }
-        return best_path;
-    }
 
-    private ArrayList<Coordinate> run(Coordinate start_coord, Coordinate destination_coord,
-                                      HashMap<Coordinate,MapTile> map) {
+        Coordinate destination_coord = destination_coords.get(0);
+        int num_found = 0;
         boolean found_path;
         found_path = false;
         // use map to find all wall, lava tiles and store it as wall, lava
@@ -73,9 +58,20 @@ public class Dijkstra implements iSearchStrategy {
             current = frontier.poll();
 
             // break if find the shortest path and set found_path to ture
-            if (calculate_distance(current.getCoordinate(), destination_coord) == 0) {
-                found_path = true;
-                break;
+            for (Coordinate destination: destination_coords){
+                if (calculate_distance(current.getCoordinate(), destination) == 0) {
+                    num_found++;
+                    if (num_found == 1){
+                        destination_coord = destination;
+                    }
+                    if (cost_so_far.get(new Item(destination)) < cost_so_far.get(new Item(destination_coord))){
+                        destination_coord = destination;
+                    }
+                    found_path = true;
+                    if (num_found == destination_coords.size()){
+                        break;
+                    }
+                }
             }
 
             // assign cost(priority) to each neighbour to current item
@@ -100,6 +96,8 @@ public class Dijkstra implements iSearchStrategy {
         } else {
             path = null;
         }
+        System.out.println(destination_coord);
+        System.out.println(path);
         return path;
 
     }
