@@ -30,13 +30,13 @@ public class ExploreStrategy implements iControllerStrategy {
         iSearchStrategy searchAlg = SearchStrategyFactory.getInstance().getStrategy(SearchAlgorithmType.Dijkstra);
 
 
-        Coordinate des = null;
-        for(Coordinate next: map.keySet()) {
-            if(map.get(next).isType(MapTile.Type.FINISH)) {
-                des = next;
-                break;
-            }
-        }
+//        Coordinate des = null;
+//        for(Coordinate next: map.keySet()) {
+//            if(map.get(next).isType(MapTile.Type.FINISH)) {
+//                des = next;
+//                break;
+//            }
+//        }
         ArrayList<Coordinate> nextPos = getPosAround(currPos, map);
         ArrayList<Coordinate> unseenPos = new ArrayList<>();
         for(Coordinate next: nextPos) {
@@ -128,7 +128,19 @@ public class ExploreStrategy implements iControllerStrategy {
 
     // return the positions next to the given point
     private ArrayList<Coordinate> getPosAround(Coordinate currPos, HashMap<Coordinate, MapTile> map) {
+
         ArrayList<Coordinate> out = new ArrayList<>();
+//        for(int i = currPos.x - Car.VIEW_SQUARE; i <= currPos.x + Car.VIEW_SQUARE; i ++) {
+//            out.add(new Coordinate(i, currPos.y - Car.VIEW_SQUARE - 1));
+//            out.add(new Coordinate(i, currPos.y + Car.VIEW_SQUARE + 1));
+//        }
+//        for(int i = currPos.y - Car.VIEW_SQUARE; i <= currPos.y + Car.VIEW_SQUARE; i ++) {
+//            out.add(new Coordinate(currPos.x - Car.VIEW_SQUARE - 1, i));
+//            out.add(new Coordinate(currPos.x + Car.VIEW_SQUARE + 1, i));
+//        }
+
+
+//        Coordinate vertex1 = new Coordinate(currPos.x, currPos.y);
         out.add(new Coordinate(currPos.x + Car.VIEW_SQUARE + 1, currPos.y));
         out.add(new Coordinate(currPos.x - Car.VIEW_SQUARE - 1, currPos.y));
         out.add(new Coordinate(currPos.x, currPos.y + Car.VIEW_SQUARE + 1));
@@ -188,8 +200,6 @@ public class ExploreStrategy implements iControllerStrategy {
 //            exploreMap[currPos.x][currPos.y] = 1;
 //        }
 //    }
-
-
 
     public boolean canExit(int fuel, Coordinate coor, Integer[][] distMap) {
         return distMap[coor.x][coor.y] <= fuel;

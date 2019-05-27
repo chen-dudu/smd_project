@@ -6,7 +6,6 @@ import tiles.*;
 import utilities.Coordinate;
 import world.World;
 
-import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.ArrayList;
 
@@ -22,14 +21,11 @@ public class MyMap {
     private HashMap<Coordinate, MapTile> myMap;
     //
     private ArrayList<Coordinate> destinations;
-    //
-    private ArrayList<Coordinate> parcels;
 
     public MyMap(HashMap<Coordinate, MapTile> emptyMap) {
         visited = new int[World.MAP_HEIGHT][World.MAP_WIDTH];
         myMap = new HashMap<>();
         destinations = new ArrayList<>();
-        parcels = new ArrayList<>();
 
         AdapterFactory factory = AdapterFactory.getInstance();
         for(Coordinate next: emptyMap.keySet()) {
@@ -70,7 +66,6 @@ public class MyMap {
                 visited[next.y][next.x] = 1;
             }
             MapTile tile = view.get(next);
-            // already in the map
             switch (factory.getAdapter(tile).getType(tile)) {
                 case WALL:
                     myMap.put(next, new MapTile(MapTile.Type.WALL));
@@ -94,7 +89,6 @@ public class MyMap {
                     myMap.put(next, new HealthTrap());
                     break;
                 case PARCEL:
-                    System.out.println("####");
                     myMap.put(next, new ParcelTrap());
                     break;
             }
@@ -134,6 +128,7 @@ public class MyMap {
         return out;
     }
 
+    // check if the given is within the border
     private boolean onBoard(Coordinate coor) {
         return 0 <= coor.x && coor.x < World.MAP_WIDTH &&
                 0 <= coor.y && coor.y < World.MAP_HEIGHT;
