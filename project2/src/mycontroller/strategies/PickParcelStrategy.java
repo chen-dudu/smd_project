@@ -1,5 +1,6 @@
 package mycontroller.strategies;
 
+import mycontroller.adapters.TileType;
 import tiles.MapTile;
 import utilities.Coordinate;
 
@@ -12,37 +13,23 @@ import java.util.HashMap;
  */
 public class PickParcelStrategy implements iControllerStrategy {
 
-    // shortest path to the parcel
-    private ArrayList<Coordinate> path;
     private iSearchStrategy strategy;
-    private SearchStrategyFactory factory;
+    private ArrayList<Coordinate> des;
+    private HashMap<TileType, Integer> pathCost;
 
-
-    public PickParcelStrategy(SearchAlgorithmType type, Coordinate parcel) {
-        path = new ArrayList<>();
-        factory = SearchStrategyFactory.getInstance();
-        strategy = factory.getStrategy(type);
+    public PickParcelStrategy(SearchAlgorithmType type, HashMap<TileType, Integer> pathCost) {
+        strategy = SearchStrategyFactory.getInstance().getStrategy(type);
+        this.pathCost = pathCost;
     }
 
     @Override
-    public Coordinate getNextPosition(float fuel, Coordinate curr, Coordinate des, HashMap<Coordinate, MapTile> map, Integer[][] seenWorld) {
-        path = strategy.search(curr, des, map);
-        return path.get(1);
+    public Coordinate getNextPosition(float fuel, Coordinate curr, ArrayList<Coordinate> des,
+                                      HashMap<Coordinate, MapTile> map, int[][] seenWorld) {
+        return strategy.search(curr, des, map, pathCost).get(1);
     }
 
-    @Override
-    public void updateMap(Coordinate currPos) {
-
-    }
-
-
-    // TODO decide detail implementation
-    public boolean reachable(HashMap<Coordinate, MapTile> map, Coordinate coor, Coordinate parcel) {
-        path = strategy.search(coor, parcel, map);
-        if (path == null) {
-            return false;
-        } else {
-            return true;
-        }
+    public boolean reachable(HashMap<Coordinate, MapTile> map, Coordinate currPos,
+                             ArrayList<Coordinate> parcels) {
+        return strategy.search(currPos, parcels, map, pathCost) != null;
     }
 }

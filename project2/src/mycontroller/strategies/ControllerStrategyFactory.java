@@ -1,8 +1,10 @@
 package mycontroller.strategies;
 
+import mycontroller.adapters.TileType;
 import tiles.MapTile;
 import utilities.Coordinate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -26,16 +28,18 @@ public class ControllerStrategyFactory {
         return factory;
     }
 
-    public iControllerStrategy getStrategy(CarState carState, HashMap<Coordinate, MapTile> map, SearchAlgorithmType type, Coordinate finish) {
+    public iControllerStrategy getStrategy(CarState carState, HashMap<Coordinate, MapTile> map,
+                                           SearchAlgorithmType type, ArrayList<Coordinate> goals,
+                                           HashMap<TileType, Integer> pathCost) {
         switch (carState) {
             case EXPLORING:
-                return new ExploreStrategy();
+                return new ExploreStrategy(pathCost);
             case EXITING:
-                return new ExitStrategy(map, type, finish);
+                return new ExitStrategy(map, type, goals, pathCost);
             case COLLECTING:
-                return new PickParcelStrategy(type, finish);
+                return new PickParcelStrategy(type, pathCost);
             case HEALING:
-                return new HealStrategy();
+                return new HealStrategy(pathCost);
         }
         return null;
     }

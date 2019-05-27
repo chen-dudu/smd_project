@@ -1,5 +1,6 @@
 package mycontroller.strategies;
 
+import mycontroller.adapters.TileType;
 import tiles.MapTile;
 import utilities.Coordinate;
 
@@ -18,5 +19,7 @@ public interface iSearchStrategy {
      * @param des the position of the destination
      * @param map the map representing the world
      */
-    ArrayList<Coordinate> search(Coordinate start, Coordinate des, HashMap<Coordinate, MapTile> map);
+    ArrayList<Coordinate> search(Coordinate start, ArrayList<Coordinate> des,
+                                 HashMap<Coordinate, MapTile> map,
+                                 HashMap<TileType, Integer> pathCost);
 }

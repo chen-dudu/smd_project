@@ -1,5 +1,6 @@
 package mycontroller;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import controller.CarController;
 import mycontroller.strategies.CarState;
 import mycontroller.strategies.ControllerStrategyFactory;
@@ -20,11 +21,6 @@ import java.util.HashMap;
 import java.util.Arrays;
 
 public class MyAutoController extends CarController{
-	// How many minimum units the wall is away from the player.
-	private int wallSensitivity = 1;
-
-	private boolean isFollowingWall = false; // This is set to true when the car starts sticking to a wall.
-
 	// Car Speed to move at
 	private final int CAR_MAX_SPEED = 1;
 
@@ -32,60 +28,39 @@ public class MyAutoController extends CarController{
 	private ControllerStrategyFactory strategyFactory;
 	private AdapterFactory adapterFactory;
 //	private iControllerStrategy strategy;
-	private ArrayList<Coordinate> destinations;
+//	private ArrayList<Coordinate> destinations;
 
 	private float fuel;
-	private Coordinate parcelPos;
+//	private Coordinate parcelPos;
 	private int turn;
 
 	private HashMap<CarState, iControllerStrategy> controllerStrategies;
 
-	// 0 for not explored, 1 for yes
-	private Integer[][] exploreMap;
-	HashMap<Coordinate, MapTile> myMap;
-
-	private Coordinate prevPos;
+//	private Coordinate prevPos;
 	private float threshold;
 
-	private HashMap<TileType, Integer> costTable = new HashMap<>();
+	// record the path cost for different types of tiles
+	private HashMap<TileType, Integer> costTable;
 	private Simulation.StrategyMode mode;
+
+	private MyMap maps;
 
 	public MyAutoController(Car car) {
 		super(car);
 		fuel = car.getFuel();
+		mode = Simulation.toConserve();
 		state = CarState.EXPLORING;
 		strategyFactory = ControllerStrategyFactory.getInstance();
 		adapterFactory = AdapterFactory.getInstance();
-		destinations = new ArrayList<>();
+//		destinations = new ArrayList<>();
 		controllerStrategies = new HashMap<>();
-		myMap = getMap();
-
-		exploreMap = new Integer[World.MAP_HEIGHT][World.MAP_WIDTH];
-		for(int i = 0; i < exploreMap.length; i++) {
-			for(int j = 0; j < exploreMap[i].length; j++) {
-				exploreMap[i][j] = 0;
-			}
-		}
-
-		for(Coordinate next: myMap.keySet()) {
-			if(myMap.get(next).isType(MapTile.Type.FINISH)) {
-				destinations.add(next);
-			}
-			else if(myMap.get(next).isType(MapTile.Type.WALL)) {
-				exploreMap[next.y][next.x] = 1;
-			}
-		}
-
-		controllerStrategies.put(state, strategyFactory.getStrategy(state, getMap(), SearchAlgorithmType.Dijkstra, destinations.get(0)));
-//		controllerStrategies.get(state).updateMap(new Coordinate(getPosition()));
-
-//		printMap(exploreMap);
-
-		parcelPos = null;
+		costTable = new HashMap<>();
+		maps = new MyMap(getMap());
+//		System.out.println("+++" + maps.getDes().size());
+		initCostTable(mode);
+		controllerStrategies.put(state, strategyFactory.getStrategy(state, maps.getMap(), SearchAlgorithmType.Dijkstra, maps.getDes(), costTable));
 		turn = 0;
-		prevPos = null;
 
-		mode = Simulation.toConserve();
 		if(mode == Simulation.StrategyMode.HEALTH) {
 			threshold = getHealth()/4;
 		}
@@ -96,32 +71,50 @@ public class MyAutoController extends CarController{
 			System.out.println("unsuported conserve type");
 			System.exit(0);
 		}
+//		exploreMap = new Integer[World.MAP_HEIGHT][World.MAP_WIDTH];
+//		for(int i = 0; i < exploreMap.length; i++) {
+//			for(int j = 0; j < exploreMap[i].length; j++) {
+//				exploreMap[i][j] = 0;
+//			}
+//		}
+//
+//		for(Coordinate next: maps.getMap().keySet()) {
+//			if(myMap.get(next).isType(MapTile.Type.FINISH)) {
+//				destinations.add(next);
+//			}
+//			else if(myMap.get(next).isType(MapTile.Type.WALL)) {
+//				exploreMap[next.y][next.x] = 1;
+//			}
+//		}
 
-		initCostTable(mode);
+//		controllerStrategies.get(state).updateMap(new Coordinate(getPosition()));
+
+//		printMap(exploreMap);
+
+//		parcelPos = null;
+//		prevPos = null;
 	}
 
-	// Coordinate initialGuess;
-	// boolean notSouth = true;
 	@Override
 	public void update() {
 
-		printMap(exploreMap);
+		maps.printMap();
 
 //		System.out.println(">>>>>>>>>>>>>>>>" + exploreMap[0][0]);
 		turn++;
 		System.out.println(World.MAP_WIDTH + " -- " + World.MAP_HEIGHT);
 		HashMap<Coordinate, MapTile> myView = getView();
-		updateMap(myMap, myView);
+		maps.updateMap(myView);
 		Coordinate currPos = new Coordinate(getPosition());
 
-		for(Coordinate next: myView.keySet()) {
-			if(0 <= next.x && next.x < World.MAP_WIDTH &&
-					0 <= next.y && next.y < World.MAP_HEIGHT) {
-				exploreMap[next.y][next.x] = 1;
-			}
-		}
+//		for(Coordinate next: myView.keySet()) {
+//			if(0 <= next.x && next.x < World.MAP_WIDTH &&
+//					0 <= next.y && next.y < World.MAP_HEIGHT) {
+//				exploreMap[next.y][next.x] = 1;
+//			}
+//		}
 
-		if(destinations.contains(currPos)) {
+		if(maps.getDes().contains(currPos)) {
 			applyBrake();
 			return;
 		}
@@ -130,21 +123,29 @@ public class MyAutoController extends CarController{
 //			applyReverseAcceleration();
 //			return;
 //		}
-
-		for(Coordinate next: myView.keySet()) {
-			MapTile tile = myView.get(next);
-			if(adapterFactory.getAdapter(tile).getType(tile) == TileType.PARCEL && numParcelsFound() < numParcels()) {
-				parcelPos = next;
+		ArrayList<Coordinate> parcelPos = maps.getParcel();
+//		System.out.println("found:    " + numParcelsFound());
+//		System.out.println("to find:   " + numParcels());
+		if(numParcelsFound() < numParcels()) {
+//			System.out.println("found:    " + numParcelsFound());
+//			System.out.println("to find:   " + numParcels());
+			if(parcelPos.size() > 0) {
 				updateState(CarState.COLLECTING);
-				break;
+			}
+			else if(parcelPos.size() == 0) {
+				updateState(CarState.EXPLORING);
 			}
 		}
+//		for(Coordinate next: parcelPos) {
+//			System.out.println(next);
+//		}
 
-		if(currPos.equals(parcelPos)) {
+//		if(currPos.equals(parcelPos)) {
+//		if(!parcelPos.contains(currPos)) {
 //			System.out.println("~~~~~~~~~");
-			parcelPos = null;
-			updateState(CarState.EXPLORING);
-		}
+//			parcelPos = null;
+//			updateState(CarState.EXPLORING);
+//		}
 
 		if(numParcels() == numParcelsFound()) {
 			updateState(CarState.EXITING);
@@ -161,68 +162,57 @@ public class MyAutoController extends CarController{
 			}
 		}
 
-		if(parcelPos != null) {
+		ArrayList<Coordinate> goal;
+		if(state == CarState.COLLECTING) {
 			if(!controllerStrategies.containsKey(state)) {
-				controllerStrategies.put(state, strategyFactory.getStrategy(state, myMap, SearchAlgorithmType.Dijkstra, parcelPos));
+//				controllerStrategies.put(state, strategyFactory.getStrategy(state, maps.getMap(), SearchAlgorithmType.Dijkstra, parcelPos, costTable));
 			}
+			goal = parcelPos;
 		}
 		else {
 			if(!controllerStrategies.containsKey(state)) {
-				controllerStrategies.put(state, strategyFactory.getStrategy(state, myMap, SearchAlgorithmType.Dijkstra, destinations.get(0)));
+//				controllerStrategies.put(state, strategyFactory.getStrategy(state, maps.getMap(), SearchAlgorithmType.Dijkstra, destinations, costTable));
 			}
+			goal = maps.getDes();
+//			System.out.println("////" + goal.size());
 		}
-
+		if(!controllerStrategies.containsKey(state)) {
+			controllerStrategies.put(state, strategyFactory.getStrategy(state, maps.getMap(), SearchAlgorithmType.Dijkstra, goal, costTable));
+		}
 		Coordinate nextPos;
 		if(state == CarState.COLLECTING) {
 			PickParcelStrategy temp = (PickParcelStrategy) controllerStrategies.get(state);
-			if(temp.reachable(myMap, currPos, parcelPos)) {
-				nextPos = temp.getNextPosition(fuel, currPos, parcelPos, myMap, exploreMap);
+			if(temp.reachable(maps.getMap(), currPos, parcelPos)) {
+				nextPos = temp.getNextPosition(fuel, currPos, parcelPos, maps.getMap(), maps.getVisited());
 			}
+			// parcel can't be reached, give up, get back to previous state
 			else {
 				updateState(CarState.EXPLORING);
-				nextPos = controllerStrategies.get(state).getNextPosition(fuel, currPos, parcelPos, myMap, exploreMap);
+				nextPos = controllerStrategies.get(state).getNextPosition(fuel, currPos, maps.getDes(), maps.getMap(), maps.getVisited());
 			}
 		}
 		else {
-			nextPos = controllerStrategies.get(state).getNextPosition(fuel, currPos, parcelPos, myMap, exploreMap);
+			nextPos = controllerStrategies.get(state).getNextPosition(fuel, currPos, maps.getDes(), maps.getMap(), maps.getVisited());
 		}
-
-
 
 		System.out.print(currPos + " -> " + nextPos);
 		System.out.println();
 
 
 		if(getSpeed() < CAR_MAX_SPEED && turn < 2) {
+			// first start
 			applyForwardAcceleration();
 		} else {
 			makeMove(currPos, nextPos);
 		}
-		prevPos = currPos;
+//		prevPos = currPos;
 //		controllerStrategies.get(state).updateMap(currPos);
 		System.out.println("health >>> " + getHealth());
 		System.out.println(state);
-
 		fuel--;
 	}
 
-	private void printMap(Integer[][] map) {
-//		for(int i = map.length - 1; i >= 0; i--) {
-//			System.out.println(Arrays.toString(map[i]));
-//		}
-		for(int i = map.length - 1; i >= 0; i--) {
-			for(int j = 0; j < map[i].length; j++) {
-				if(map[i][j] == 1) {
-					System.out.print(map[i][j] + ", ");
-				}
-				else if(map[i][j] == 0) {
-					System.out.print(" , ");
-				}
-			}
-			System.out.println("");
-		}
-	}
-
+	// under different modes, same tile has different path cost
 	private void initCostTable(Simulation.StrategyMode mode) {
 		if(mode == Simulation.StrategyMode.FUEL) {
 			costTable.put(TileType.LAVA, 1);
@@ -242,37 +232,14 @@ public class MyAutoController extends CarController{
 		this.state = state;
 	}
 
-	private void updateMap(HashMap<Coordinate, MapTile> seenWorld, HashMap<Coordinate, MapTile> view) {
-		for(Coordinate next: view.keySet()) {
-			MapTile tile = view.get(next);
-			switch (AdapterFactory.getInstance().getAdapter(tile).getType(tile)) {
-				case LAVA:
-					seenWorld.put(next, new LavaTrap());
-					break;
-				case WATER:
-					seenWorld.put(next, new WaterTrap());
-					break;
-				case HEALTH:
-					seenWorld.put(next, new HealthTrap());
-					break;
-				case PARCEL:
-					seenWorld.put(next, new ParcelTrap());
-					break;
-			}
-		}
-	}
-
-
 	private void makeMove(Coordinate start, Coordinate des) {
 		Direction direction = getOrientation();
 		if(start.x < des.x) {
 			if(direction == Direction.NORTH) {
 				turnRight();
-//				applyForwardAcceleration();
 			}
 			else if(direction == Direction.SOUTH) {
 				turnLeft();
-//				applyForwardAcceleration();
 			}
 			else if(direction == Direction.WEST) {
 				if(getSpeed() > 0) {
@@ -289,11 +256,9 @@ public class MyAutoController extends CarController{
 		else if(start.x > des.x) {
 			if(direction == Direction.NORTH) {
 				turnLeft();
-//				applyForwardAcceleration();
 			}
 			else if(direction == Direction.SOUTH) {
 				turnRight();
-//				applyForwardAcceleration();
 			}
 			else if(direction == Direction.WEST) {
 				applyForwardAcceleration();
@@ -321,11 +286,9 @@ public class MyAutoController extends CarController{
 			}
 			else if(direction == Direction.WEST) {
 				turnRight();
-//				applyForwardAcceleration();
 			}
 			else {
 				turnLeft();
-//				applyForwardAcceleration();
 			}
 		}
 		else if(start.y > des.y) {
@@ -342,11 +305,9 @@ public class MyAutoController extends CarController{
 			}
 			else if(direction == Direction.WEST) {
 				turnLeft();
-//				applyForwardAcceleration();
 			}
 			else {
 				turnRight();
-//				applyForwardAcceleration();
 			}
 		}
 	}
