@@ -188,7 +188,7 @@ public class MyAutoController extends CarController {
 			costTable.put(TileType.WATER, 1);
 			costTable.put(TileType.HEALTH, 1);
 		} else if (mode == Simulation.StrategyMode.HEALTH) {
-			costTable.put(TileType.LAVA, 1);
+			costTable.put(TileType.LAVA, 99);
 			costTable.put(TileType.ROAD, 1);
 			// take health only when it is necessary, so high cost
 			costTable.put(TileType.WATER, 999);

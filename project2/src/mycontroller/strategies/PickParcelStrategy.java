@@ -18,7 +18,7 @@ public class PickParcelStrategy implements iControllerStrategy {
     search algorithm that will be used for finding
     the best path leading to a parcel
      */
-    private iSearchStrategy strategy;
+    private iSearchStrategy searchAlg;
     // the path cost for different types of tiles
     private HashMap<TileType, Integer> pathCost;
 
@@ -28,14 +28,14 @@ public class PickParcelStrategy implements iControllerStrategy {
      * @param pathCost the path cost for different types of tiles
      */
     public PickParcelStrategy(SearchAlgorithmType type, HashMap<TileType, Integer> pathCost) {
-        strategy = SearchStrategyFactory.getInstance().getStrategy(type);
+        searchAlg = SearchStrategyFactory.getInstance().getStrategy(type);
         this.pathCost = pathCost;
     }
 
     @Override
     public Coordinate getNextPosition(float fuel, Coordinate curr, ArrayList<Coordinate> des,
                                       HashMap<Coordinate, MapTile> map, int[][] seenWorld) {
-        return strategy.search(curr, des, map, pathCost).get(1);
+        return searchAlg.search(curr, des, map, pathCost).get(1);
     }
 
     /**
@@ -47,6 +47,6 @@ public class PickParcelStrategy implements iControllerStrategy {
      */
     public boolean reachable(HashMap<Coordinate, MapTile> map, Coordinate currPos,
                              ArrayList<Coordinate> parcels) {
-        return strategy.search(currPos, parcels, map, pathCost) != null;
+        return searchAlg.search(currPos, parcels, map, pathCost) != null;
     }
 }
