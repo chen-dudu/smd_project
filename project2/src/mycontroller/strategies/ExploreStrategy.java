@@ -58,6 +58,10 @@ public class ExploreStrategy implements iControllerStrategy {
                     }
                 }
             }
+            // all world is explored
+            if(candidate.size() == 0) {
+                return currPos;
+            }
             return searchAlg.search(currPos, candidate, map, pathCost).get(1);
         }
     }
