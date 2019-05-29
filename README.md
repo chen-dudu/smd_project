@@ -7,6 +7,16 @@
 to market. The Automail is an automated mail sorting and delivery system designed to operate in large
 buildings that have dedicated Mail rooms. It offers end to end receipt and delivery of mail items within
 the building, and can be tweaked to fit many different installation environments.
+- Our grade: 10.5/12
+- Feedback:  
+  - Domain model: team is not presented.  
+  - Class Diagram: some dependencies are missing, i.e., RobotTeam and Robot  
+  - Sequence Diagram: good  
+  - Report: Some arguments are incorrect, composite pattern is not well 
+    established, i.e., addToTeam should be in IRobot. When talking about 
+    low coulping and high cohesion, more justifications about why low/high 
+    are desired  
+  - Implementation: pass all tests. implementation is reasonable.
 ## Project 2
 - Robotic Mailing Solutions Inc. (RMS) were so happy with your changes 
 and design report for the Automail simulation system, they saw the 
