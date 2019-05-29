@@ -1,10 +1,11 @@
 package mycontroller.algorithms;
 
-import java.util.*;
 import tiles.MapTile;
 import utilities.Coordinate;
 import mycontroller.adapters.TileType;
 import mycontroller.adapters.AdapterFactory;
+
+import java.util.*;
 
 /**
  * Team: W9-5
