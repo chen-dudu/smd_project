@@ -1,4 +1,4 @@
-package mycontroller.strategies;
+package mycontroller.algorithms;
 
 /**
  * Team: W9-5

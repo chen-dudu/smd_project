@@ -1,4 +1,4 @@
-package mycontroller.strategies;
+package mycontroller.algorithms;
 
 import mycontroller.adapters.AdapterFactory;
 import mycontroller.adapters.TileType;

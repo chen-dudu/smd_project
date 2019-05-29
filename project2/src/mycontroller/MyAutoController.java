@@ -1,17 +1,19 @@
 package mycontroller;
 
-import controller.CarController;
 import tiles.*;
-import utilities.Coordinate;
 import world.Car;
+import utilities.Coordinate;
+
+import controller.CarController;
 import world.WorldSpatial.Direction;
 import swen30006.driving.Simulation;
 
-import mycontroller.strategies.*;
 import mycontroller.adapters.*;
+import mycontroller.strategies.*;
+import mycontroller.algorithms.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 public class MyAutoController extends CarController {
 
@@ -25,7 +27,7 @@ public class MyAutoController extends CarController {
 	private float fuel;
 	private int move;
 	private float threshold;
-	private float originnalHealth;
+	private float originalHealth;
 	private boolean startEngin;
 	private CarState prevState;
 
@@ -54,7 +56,7 @@ public class MyAutoController extends CarController {
 			System.exit(0);
 		}
 
-		originnalHealth = getHealth();
+		originalHealth = getHealth();
 		startEngin = false;
 		prevState = null;
 	}
@@ -108,6 +110,7 @@ public class MyAutoController extends CarController {
 		makeAction(currPos, nextPos);
 		move++;
 		fuel--;
+		System.out.println(state);
 	}
 
 	private void makeAction(Coordinate start, Coordinate des) {
@@ -198,7 +201,7 @@ public class MyAutoController extends CarController {
 
 	private void updateState(ArrayList<Coordinate> parcelPos) {
 		// stays in the healing state until recovers to the original health
-		if(state == CarState.HEALING && getHealth() < originnalHealth) {
+		if(state == CarState.HEALING && getHealth() < originalHealth) {
 			return;
 		}
 

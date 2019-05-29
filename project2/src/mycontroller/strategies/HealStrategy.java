@@ -1,12 +1,13 @@
 package mycontroller.strategies;
 
-import mycontroller.adapters.AdapterFactory;
-import mycontroller.adapters.TileType;
 import tiles.MapTile;
 import utilities.Coordinate;
+import mycontroller.algorithms.*;
+import mycontroller.adapters.TileType;
+import mycontroller.adapters.AdapterFactory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Team: W9-5

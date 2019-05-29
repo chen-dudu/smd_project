@@ -1,13 +1,14 @@
 package mycontroller.strategies;
 
-import mycontroller.adapters.TileType;
-import tiles.MapTile;
-import utilities.Coordinate;
 import world.Car;
 import world.World;
+import tiles.MapTile;
+import utilities.Coordinate;
+import mycontroller.algorithms.*;
+import mycontroller.adapters.TileType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.ListIterator;
 
 /**

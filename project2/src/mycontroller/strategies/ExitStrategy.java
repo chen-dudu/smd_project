@@ -1,8 +1,9 @@
 package mycontroller.strategies;
 
-import mycontroller.adapters.TileType;
 import tiles.MapTile;
 import utilities.Coordinate;
+import mycontroller.algorithms.*;
+import mycontroller.adapters.TileType;
 
 import java.util.*;
 
