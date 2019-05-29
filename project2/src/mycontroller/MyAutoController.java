@@ -17,31 +17,44 @@ import java.util.ArrayList;
 
 public class MyAutoController extends CarController {
 
-	private CarState state;
-	private ControllerStrategyFactory strategyFactory;
-	private HashMap<CarState, iControllerStrategy> controllerStrategies;
+	// number of moves the car has made
+	private int move;
+
+	// fuel the car has
+	private float fuel;
+	// a threshold used to determine when to change state
+	private float threshold;
+	// the health value the car initially has
+	private float originalHealth;
+
+	private boolean wallAhead;
+	private boolean startEngine;
+
 	// record the path cost for different types of tiles
 	private HashMap<TileType, Integer> costTable;
-	private Simulation.StrategyMode mode;
+	// all the strategies the car has
+	private HashMap<CarState, iControllerStrategy> controllerStrategies;
+
 	private MyMap maps;
-	private float fuel;
-	private int move;
-	private float threshold;
-	private float originalHealth;
-	private boolean startEngin;
+
+	private CarState currState;
 	private CarState prevState;
+
+	private Simulation.StrategyMode mode;
+
+	private ControllerStrategyFactory strategyFactory;
 
 	public MyAutoController(Car car) {
 		super(car);
 		fuel = car.getFuel();
 		mode = Simulation.toConserve();
-		state = CarState.EXPLORING;
+		currState = CarState.EXPLORING;
 		strategyFactory = ControllerStrategyFactory.getInstance();
 		controllerStrategies = new HashMap<>();
 		costTable = new HashMap<>();
 		maps = new MyMap(getMap());
 		initCostTable(mode);
-		controllerStrategies.put(state, strategyFactory.getStrategy(state, maps.getMap(), SearchAlgorithmType.Dijkstra, maps.getDes(), costTable));
+		controllerStrategies.put(currState, strategyFactory.getStrategy(currState, maps.getMap(), SearchAlgorithmType.Dijkstra, maps.getDes(), costTable));
 		move = 0;
 
 		if (mode == Simulation.StrategyMode.HEALTH) {
@@ -57,7 +70,7 @@ public class MyAutoController extends CarController {
 		}
 
 		originalHealth = getHealth();
-		startEngin = false;
+		startEngine = false;
 		prevState = null;
 	}
 
@@ -77,47 +90,47 @@ public class MyAutoController extends CarController {
 		updateState(parcelPos);
 
 		ArrayList<Coordinate> goal;
-		if (state == CarState.COLLECTING) {
+		if (currState == CarState.COLLECTING) {
 			// in parcel collecting state, goal is parcel
 			goal = parcelPos;
 		} else {
 			// in other state, goal is exit points
 			goal = maps.getDes();
 		}
-		if (!controllerStrategies.containsKey(state)) {
-			controllerStrategies.put(state, strategyFactory.getStrategy(state, maps.getMap(), SearchAlgorithmType.Dijkstra, goal, costTable));
+		if (!controllerStrategies.containsKey(currState)) {
+			controllerStrategies.put(currState, strategyFactory.getStrategy(currState, maps.getMap(), SearchAlgorithmType.Dijkstra, goal, costTable));
 		}
 
 		Coordinate nextPos;
-		if (state == CarState.COLLECTING) {
-			PickParcelStrategy temp = (PickParcelStrategy) controllerStrategies.get(state);
+		if (currState == CarState.COLLECTING) {
+			PickParcelStrategy temp = (PickParcelStrategy) controllerStrategies.get(currState);
 			if (temp.reachable(maps.getMap(), currPos, parcelPos)) {
 				nextPos = temp.getNextPosition(fuel, currPos, parcelPos, maps.getMap(), maps.getExploreMap());
 			}
 			// parcel can't be reached, give up, keep exploring map
 			else {
 				changeState(CarState.EXPLORING);
-				nextPos = controllerStrategies.get(state).getNextPosition(fuel, currPos, maps.getDes(), maps.getMap(), maps.getExploreMap());
+				nextPos = controllerStrategies.get(currState).getNextPosition(fuel, currPos, maps.getDes(), maps.getMap(), maps.getExploreMap());
 			}
 		} else {
-			nextPos = controllerStrategies.get(state).getNextPosition(fuel, currPos, maps.getDes(), maps.getMap(), maps.getExploreMap());
+			nextPos = controllerStrategies.get(currState).getNextPosition(fuel, currPos, maps.getDes(), maps.getMap(), maps.getExploreMap());
 		}
 
 		if(move < 2 || prevState == CarState.HEALING) {
 			// engine is off at the beginning, also during recovering
-			startEngin = true;
+			startEngine = true;
 		}
 		makeAction(currPos, nextPos);
 		move++;
 		fuel--;
-		System.out.println(state);
+		System.out.println(currPos);
 	}
 
 	private void makeAction(Coordinate start, Coordinate des) {
 		Direction direction = getOrientation();
-		if(startEngin) {
+		if(startEngine) {
 			applyForwardAcceleration();
-			startEngin = false;
+			startEngine = false;
 			return;
 		}
 		if (start.x < des.x) {
@@ -201,7 +214,7 @@ public class MyAutoController extends CarController {
 
 	private void updateState(ArrayList<Coordinate> parcelPos) {
 		// stays in the healing state until recovers to the original health
-		if(state == CarState.HEALING && getHealth() < originalHealth) {
+		if(currState == CarState.HEALING && getHealth() < originalHealth) {
 			return;
 		}
 
@@ -222,7 +235,7 @@ public class MyAutoController extends CarController {
 		}
 
 		if (mode == Simulation.StrategyMode.HEALTH) {
-			// health below threshode, enter healing state
+			// health below threshold, enter healing state
 			if (getHealth() <= threshold) {
 				changeState(CarState.HEALING);
 				// now, lava costs much more
@@ -238,8 +251,8 @@ public class MyAutoController extends CarController {
 	}
 
 	// change to state of car to the specified state, and update previous state
-	private void changeState(CarState state) {
-		prevState = this.state;
-		this.state = state;
+	private void changeState(CarState newState) {
+		prevState = currState;
+		currState = newState;
 	}
 }
