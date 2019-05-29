@@ -33,14 +33,11 @@ public class ControllerStrategyFactory {
     /**
      * return a controller strategy with the specified type
      * @param carState the type of controller strategy to be returned
-     * @param map the map representing the world
      * @param type type of search algorithm to use
-     * @param goals the destinations for search algorithm
      * @param pathCost the path cost for different types of tiles
      * @return a controller strategy with specified type
      */
-    public iControllerStrategy getStrategy(CarState carState, HashMap<Coordinate, MapTile> map,
-                                           SearchAlgorithmType type, ArrayList<Coordinate> goals,
+    public iControllerStrategy getStrategy(CarState carState, SearchAlgorithmType type,
                                            HashMap<TileType, Integer> pathCost) {
         switch (carState) {
             case EXPLORING:

@@ -52,7 +52,7 @@ public class MyAutoController extends CarController {
 		costTable = new HashMap<>();
 		maps = new MyMap(getMap());
 		initCostTable(mode);
-		controllerStrategies.put(currState, strategyFactory.getStrategy(currState, maps.getMap(), SearchAlgorithmType.Dijkstra, maps.getDes(), costTable));
+		controllerStrategies.put(currState, strategyFactory.getStrategy(currState, SearchAlgorithmType.Dijkstra, costTable));
 
 		if (mode == Simulation.StrategyMode.HEALTH) {
 			threshold = getHealth() / 4;
@@ -62,7 +62,7 @@ public class MyAutoController extends CarController {
 		}
 		else {
 			// for completeness only
-			System.out.println("unsuported conserve type");
+			System.out.println("unsupported conserve type");
 			System.exit(0);
 		}
 
@@ -87,31 +87,23 @@ public class MyAutoController extends CarController {
 		ArrayList<Coordinate> parcelPos = maps.getParcel();
 		updateState(parcelPos);
 
-		ArrayList<Coordinate> goal;
-		if (currState == CarState.COLLECTING) {
-			// in parcel collecting state, goal is parcel
-			goal = parcelPos;
-		} else {
-			// in other state, goal is exit points
-			goal = maps.getDes();
-		}
 		if (!controllerStrategies.containsKey(currState)) {
-			controllerStrategies.put(currState, strategyFactory.getStrategy(currState, maps.getMap(), SearchAlgorithmType.Dijkstra, goal, costTable));
+			controllerStrategies.put(currState, strategyFactory.getStrategy(currState, SearchAlgorithmType.Dijkstra, costTable));
 		}
 
 		Coordinate nextPos;
 		if (currState == CarState.COLLECTING) {
 			PickParcelStrategy temp = (PickParcelStrategy) controllerStrategies.get(currState);
 			if (temp.reachable(maps.getMap(), currPos, parcelPos)) {
-				nextPos = temp.getNextPosition(fuel, currPos, parcelPos, maps.getMap(), maps.getExploreMap());
+				nextPos = temp.getNextPosition(currPos, parcelPos, maps.getMap(), maps.getExploreMap());
 			}
 			// parcel can't be reached, give up, keep exploring map
 			else {
 				changeState(CarState.EXPLORING);
-				nextPos = controllerStrategies.get(currState).getNextPosition(fuel, currPos, maps.getDes(), maps.getMap(), maps.getExploreMap());
+				nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps.getDes(), maps.getMap(), maps.getExploreMap());
 			}
 		} else {
-			nextPos = controllerStrategies.get(currState).getNextPosition(fuel, currPos, maps.getDes(), maps.getMap(), maps.getExploreMap());
+			nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps.getDes(), maps.getMap(), maps.getExploreMap());
 		}
 
 		if(initStart || prevState == CarState.HEALING) {
@@ -188,8 +180,7 @@ public class MyAutoController extends CarController {
 			} else {
 				turnRight();
 			}
-		}
-		else {
+		} else {
 			applyBrake();
 		}
 	}
@@ -220,7 +211,7 @@ public class MyAutoController extends CarController {
 		// job not finished
 		if (numParcelsFound() < numParcels()) {
 			if (parcelPos.size() > 0) {
-				// known parecels to be collected
+				// known parcels to be collected
 				changeState(CarState.COLLECTING);
 			}
 			// no known parcels to collect, keep exploring map

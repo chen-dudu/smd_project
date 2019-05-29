@@ -32,7 +32,7 @@ public class ExitStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(float fuel, Coordinate curr, ArrayList<Coordinate> des,
+    public Coordinate getNextPosition(Coordinate curr, ArrayList<Coordinate> des,
                                       HashMap<Coordinate, MapTile> map, int[][] seenWorld) {
         return searchAlg.search(curr, des, map, pathCost).get(1);
     }

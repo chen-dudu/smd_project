@@ -34,7 +34,8 @@ public class HealStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(float fuel, Coordinate currPos, ArrayList<Coordinate> goal, HashMap<Coordinate, MapTile> map, int[][] seenWorld) {
+    public Coordinate getNextPosition(Coordinate currPos, ArrayList<Coordinate> goal,
+                                      HashMap<Coordinate, MapTile> map, int[][] seenWorld) {
         ArrayList<Coordinate> healths = getHealth(map);
         return searchAlg.search(currPos, healths, map, pathCost).get(1);
     }

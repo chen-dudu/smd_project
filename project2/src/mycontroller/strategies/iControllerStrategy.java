@@ -13,11 +13,13 @@ import java.util.HashMap;
 public interface iControllerStrategy {
 
     /**
-     * return the next position based on the current position and fuel left
-     * @param fuel the fuel the car has
-     * @param curr the current position of the car
-     * @return the position the car will move to
+     * return the next position based on the current position
+     * @param curr the coordinate current position of the car
+     * @param des the coordinate(s) of the destination position(s)
+     * @param map the map representing the world
+     * @param seenWorld
+     * @return the coordinate of the next position the car will move to
      */
-    Coordinate getNextPosition(float fuel, Coordinate curr, ArrayList<Coordinate> des,
+    Coordinate getNextPosition(Coordinate curr, ArrayList<Coordinate> des,
                                HashMap<Coordinate, MapTile> map, int[][] seenWorld);
 }
