@@ -12,20 +12,19 @@ import java.util.*;
  * Description: Dijkstra compute the shortest path from the start to destinations
  */
 public class Dijkstra implements iSearchStrategy {
+
+    // record all of the coordinates of wall tile
     private ArrayList<Coordinate> wall;
+
+    // an up-to-date map
     private HashMap<Coordinate, MapTile> map;
+
+    // a table contain cost for different tiles
     private HashMap<TileType, Integer> costTable;
 
     public Dijkstra(){ }
 
-    /**
-     * compute shortest path from start to one of the destination of destinations, types of tiles in map is taken in
-     * consideration
-     * @param start_coord the start coordination
-     * @param destination_coords an ArrayList of destination
-     * @param map the up-to-date map
-     * return an ArrayList of coordinates, which is the shortest path from start to one of the destinations
-     */
+    @Override
     public ArrayList<Coordinate> search(Coordinate start_coord, ArrayList<Coordinate> destination_coords,
                                         HashMap<Coordinate,MapTile> map, HashMap<TileType, Integer> costTable) {
 
