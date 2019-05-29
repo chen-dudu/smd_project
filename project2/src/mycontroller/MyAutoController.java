@@ -17,9 +17,6 @@ import java.util.ArrayList;
 
 public class MyAutoController extends CarController {
 
-	// number of moves the car has made
-	private int move;
-
 	// fuel the car has
 	private float fuel;
 	// a threshold used to determine when to change state
@@ -27,6 +24,7 @@ public class MyAutoController extends CarController {
 	// the health value the car initially has
 	private float originalHealth;
 
+	private boolean initStart;
 	private boolean wallAhead;
 	private boolean startEngine;
 
@@ -55,7 +53,6 @@ public class MyAutoController extends CarController {
 		maps = new MyMap(getMap());
 		initCostTable(mode);
 		controllerStrategies.put(currState, strategyFactory.getStrategy(currState, maps.getMap(), SearchAlgorithmType.Dijkstra, maps.getDes(), costTable));
-		move = 0;
 
 		if (mode == Simulation.StrategyMode.HEALTH) {
 			threshold = getHealth() / 4;
@@ -72,6 +69,7 @@ public class MyAutoController extends CarController {
 		originalHealth = getHealth();
 		startEngine = false;
 		prevState = null;
+		initStart = true;
 	}
 
 	@Override
@@ -116,20 +114,21 @@ public class MyAutoController extends CarController {
 			nextPos = controllerStrategies.get(currState).getNextPosition(fuel, currPos, maps.getDes(), maps.getMap(), maps.getExploreMap());
 		}
 
-		if(move < 2 || prevState == CarState.HEALING) {
+		if(initStart || prevState == CarState.HEALING) {
 			// engine is off at the beginning, also during recovering
 			startEngine = true;
+			initStart = false;
 		}
+		wallAhead = checkWallAhead(currPos, maps.getMap());
 		makeAction(currPos, nextPos);
-		move++;
 		fuel--;
-		System.out.println(currPos);
 	}
 
 	private void makeAction(Coordinate start, Coordinate des) {
 		Direction direction = getOrientation();
 		if(startEngine) {
-			applyForwardAcceleration();
+			if(wallAhead) { applyReverseAcceleration(); }
+			else { applyForwardAcceleration(); }
 			startEngine = false;
 			return;
 		}
@@ -248,6 +247,28 @@ public class MyAutoController extends CarController {
 				changeState(CarState.EXITING);
 			}
 		}
+	}
+
+	// return true if the car is facing a wall, false otherwise
+	private boolean checkWallAhead(Coordinate currPos, HashMap<Coordinate, MapTile> map) {
+		Direction currDirection = getOrientation();
+		Coordinate coor = null;
+		switch (currDirection) {
+			case NORTH:
+				coor = new Coordinate(currPos.x, currPos.y + 1);
+				break;
+			case SOUTH:
+				coor = new Coordinate(currPos.x, currPos.y - 1);
+				break;
+			case WEST:
+				coor = new Coordinate(currPos.x - 1, currPos.y);
+				break;
+			case EAST:
+				coor = new Coordinate(currPos.x + 1, currPos.y);
+				break;
+		}
+		MapTile tileAhead = map.get(coor);
+		return AdapterFactory.getInstance().getAdapter(tileAhead).getType(tileAhead) == TileType.WALL;
 	}
 
 	// change to state of car to the specified state, and update previous state
