@@ -1,5 +1,6 @@
 package mycontroller.strategies;
 
+import mycontroller.CarState;
 import mycontroller.MyMap;
 import utilities.Coordinate;
 import mycontroller.algorithms.*;
@@ -32,7 +33,13 @@ public class ExitStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(Coordinate curr, MyMap map) {
+    public Coordinate getNextPosition(CarState state, Coordinate curr, MyMap map) {
         return searchAlg.search(curr, map.getExit(), map.getMap(), pathCost).get(1);
     }
+
+    @Override
+    public void addToStrategy(CarState state, iControllerStrategy strategy) {}
+
+    @Override
+    public boolean reachable(CarState state, Coordinate currPos, MyMap map) { return true; }
 }

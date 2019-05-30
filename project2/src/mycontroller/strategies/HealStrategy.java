@@ -1,5 +1,6 @@
 package mycontroller.strategies;
 
+import mycontroller.CarState;
 import tiles.MapTile;
 import mycontroller.MyMap;
 import utilities.Coordinate;
@@ -35,10 +36,16 @@ public class HealStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(Coordinate currPos, MyMap map) {
+    public Coordinate getNextPosition(CarState state, Coordinate currPos, MyMap map) {
         ArrayList<Coordinate> healths = getHealth(map.getMap());
         return searchAlg.search(currPos, healths, map.getMap(), pathCost).get(1);
     }
+
+    @Override
+    public void addToStrategy(CarState state, iControllerStrategy strategy) {}
+
+    @Override
+    public boolean reachable(CarState state, Coordinate currPos, MyMap map) { return true; }
 
     // find all health tile in the explored map
     private ArrayList<Coordinate> getHealth(HashMap<Coordinate, MapTile> map) {

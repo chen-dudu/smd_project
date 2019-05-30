@@ -34,9 +34,10 @@ public class MyAutoController extends CarController {
 	private boolean startEngine;
 
 	// record the path cost for different types of tiles
-	private HashMap<TileType, Integer> costTable;
+//	private HashMap<TileType, Integer> costTable;
 	// all the strategies the car has
-	private HashMap<CarState, iControllerStrategy> controllerStrategies;
+
+	private iControllerStrategy strategy;
 
 	private MyMap maps;
 
@@ -53,16 +54,18 @@ public class MyAutoController extends CarController {
 		mode = Simulation.toConserve();
 		currState = CarState.EXPLORING;
 		strategyFactory = ControllerStrategyFactory.getInstance();
-		controllerStrategies = new HashMap<>();
-		costTable = new HashMap<>();
+//		costTable = new HashMap<>();
 		maps = new MyMap(getMap());
-		initCostTable(mode);
-		controllerStrategies.put(currState, strategyFactory.getStrategy(currState, SearchAlgorithmType.Dijkstra, costTable));
+//		initCostTable(mode);
 
 		if (mode == Simulation.StrategyMode.HEALTH) {
+			System.out.println("~~~~");
+			strategy = new HealthStrategy();
 			threshold = getHealth() / 4;
 		}
 		else if (mode == Simulation.StrategyMode.FUEL) {
+			System.out.println("@@@@@@");
+			strategy = new FuelStrategy();
 			threshold = fuel / 4;
 		}
 		else {
@@ -92,23 +95,23 @@ public class MyAutoController extends CarController {
 		ArrayList<Coordinate> parcelPos = maps.getParcel();
 		updateState(parcelPos);
 
-		if (!controllerStrategies.containsKey(currState)) {
-			controllerStrategies.put(currState, strategyFactory.getStrategy(currState, SearchAlgorithmType.Dijkstra, costTable));
-		}
+//		if (!controllerStrategies.containsKey(currState)) {
+//			controllerStrategies.put(currState, strategyFactory.getStrategy(currState, SearchAlgorithmType.Dijkstra, costTable));
+//		}
 
 		Coordinate nextPos;
 		if (currState == CarState.COLLECTING) {
-			PickParcelStrategy temp = (PickParcelStrategy) controllerStrategies.get(currState);
-			if (temp.reachable(maps, currPos, parcelPos)) {
-				nextPos = temp.getNextPosition(currPos, maps);
+//			PickParcelStrategy temp = (PickParcelStrategy) controllerStrategies.get(currState);
+			if (strategy.reachable(currState, currPos, maps)) {
+				nextPos = strategy.getNextPosition(currState, currPos, maps);
 			}
 			// parcel can't be reached, give up, keep exploring map
 			else {
 				changeState(CarState.EXPLORING);
-				nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps);
+				nextPos = strategy.getNextPosition(currState, currPos, maps);
 			}
 		} else {
-			nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps);
+			nextPos = strategy.getNextPosition(currState, currPos, maps);
 		}
 
 		if(initStart || prevState == CarState.HEALING) {
@@ -190,22 +193,22 @@ public class MyAutoController extends CarController {
 		}
 	}
 
-	// under different modes, same tile has different path cost
-	private void initCostTable(Simulation.StrategyMode mode) {
-		if (mode == Simulation.StrategyMode.FUEL) {
-			// everything has the same, always choose shortest path
-			costTable.put(TileType.LAVA, 1);
-			costTable.put(TileType.ROAD, 1);
-			costTable.put(TileType.WATER, 1);
-			costTable.put(TileType.HEALTH, 1);
-		} else if (mode == Simulation.StrategyMode.HEALTH) {
-			costTable.put(TileType.LAVA, 99);
-			costTable.put(TileType.ROAD, 1);
-			// take health only when it is necessary, so high cost
-			costTable.put(TileType.WATER, 999);
-			costTable.put(TileType.HEALTH, 999);
-		}
-	}
+//	// under different modes, same tile has different path cost
+//	private void initCostTable(Simulation.StrategyMode mode) {
+//		if (mode == Simulation.StrategyMode.FUEL) {
+//			// everything has the same, always choose shortest path
+//			costTable.put(TileType.LAVA, 1);
+//			costTable.put(TileType.ROAD, 1);
+//			costTable.put(TileType.WATER, 1);
+//			costTable.put(TileType.HEALTH, 1);
+//		} else if (mode == Simulation.StrategyMode.HEALTH) {
+//			costTable.put(TileType.LAVA, 99);
+//			costTable.put(TileType.ROAD, 1);
+//			// take health only when it is necessary, so high cost
+//			costTable.put(TileType.WATER, 999);
+//			costTable.put(TileType.HEALTH, 999);
+//		}
+//	}
 
 	private void updateState(ArrayList<Coordinate> parcelPos) {
 		// stays in the healing state until recovers to the original health
@@ -234,7 +237,8 @@ public class MyAutoController extends CarController {
 			if (getHealth() <= threshold) {
 				changeState(CarState.HEALING);
 				// now, lava costs much more
-				costTable.put(TileType.LAVA, 999);
+				// TODO solution??
+//				costTable.put(TileType.LAVA, 999);
 			}
 		}
 		else if (mode == Simulation.StrategyMode.FUEL) {

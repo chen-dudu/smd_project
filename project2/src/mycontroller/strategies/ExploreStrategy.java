@@ -1,5 +1,6 @@
 package mycontroller.strategies;
 
+import mycontroller.CarState;
 import mycontroller.MyMap;
 import world.Car;
 import world.World;
@@ -37,7 +38,7 @@ public class ExploreStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(Coordinate currPos, MyMap map) {
+    public Coordinate getNextPosition(CarState state, Coordinate currPos, MyMap map) {
         ArrayList<Coordinate> nextPos = getPosAround(currPos, map.getMap());
         ArrayList<Coordinate> unseenPos = new ArrayList<>();
         for(Coordinate next: nextPos) {
@@ -67,6 +68,12 @@ public class ExploreStrategy implements iControllerStrategy {
             return searchAlg.search(currPos, candidate, map.getMap(), pathCost).get(1);
         }
     }
+
+    @Override
+    public void addToStrategy(CarState state, iControllerStrategy strategy) {}
+
+    @Override
+    public boolean reachable(CarState state, Coordinate currPos, MyMap map) { return true; }
 
     // return the positions next to the given point
     private ArrayList<Coordinate> getPosAround(Coordinate currPos, HashMap<Coordinate, MapTile> map) {

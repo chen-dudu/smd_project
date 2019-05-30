@@ -1,5 +1,6 @@
 package mycontroller.strategies;
 
+import mycontroller.CarState;
 import mycontroller.MyMap;
 import utilities.Coordinate;
 import mycontroller.algorithms.*;
@@ -34,19 +35,15 @@ public class PickParcelStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(Coordinate curr, MyMap map) {
+    public Coordinate getNextPosition(CarState state, Coordinate curr, MyMap map) {
         return searchAlg.search(curr, map.getParcel(), map.getMap(), pathCost).get(1);
     }
 
-    /**
-     * check if parcels are accessible
-     * @param map the map representing the world
-     * @param currPos the coordinate of current position
-     * @param parcels coordinate(s) of parcel(s)
-     * @return true if parcels are accessible, false otherwise
-     */
-    public boolean reachable(MyMap map, Coordinate currPos,
-                             ArrayList<Coordinate> parcels) {
-        return searchAlg.search(currPos, parcels, map.getMap(), pathCost) != null;
+    @Override
+    public void addToStrategy(CarState state, iControllerStrategy strategy) {}
+
+    @Override
+    public boolean reachable(CarState state, Coordinate currPos, MyMap map) {
+        return searchAlg.search(currPos, map.getParcel(), map.getMap(), pathCost) != null;
     }
 }
