@@ -49,12 +49,10 @@ public class MyAutoController extends CarController {
 		maps = new MyMap(getMap());
 
 		if (mode == Simulation.StrategyMode.HEALTH) {
-			System.out.println("~~~~");
 			strategy = new CompositeHealthControllerStrategy();
 			threshold = getHealth() / 4;
 		}
 		else if (mode == Simulation.StrategyMode.FUEL) {
-			System.out.println("@@@@@@");
 			strategy = new CompositeFuelControllerStrategy();
 			threshold = fuel / 4;
 		}
