@@ -25,7 +25,7 @@ public class PickParcelStrategy implements iControllerStrategy {
     private HashMap<TileType, Integer> pathCost;
 
     /**
-     * create a new parcel collecting strategy
+     * create a new parcel collecting strategy object
      * @param type the type of search algorithm to be used for searching
      * @param pathCost the path cost for different types of tiles
      */

@@ -24,6 +24,9 @@ public class FuelStrategy implements iControllerStrategy {
     // type of search algorithm to be used for finding next position
     private SearchAlgorithmType algorithmType = SearchAlgorithmType.Dijkstra;
 
+    /**
+     * create a new fuel strategy object
+     */
     public FuelStrategy() {
         costTable = new HashMap<>();
         strategies = new HashMap<>();

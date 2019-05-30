@@ -25,6 +25,9 @@ public class HealthStrategy implements iControllerStrategy {
     // type of search algorithm to be used for finding next position
     private SearchAlgorithmType algorithmType = SearchAlgorithmType.Dijkstra;
 
+    /**
+     * create a new health strategy object
+     */
     public HealthStrategy() {
         costTable = new HashMap<>();
         strategies = new HashMap<>();

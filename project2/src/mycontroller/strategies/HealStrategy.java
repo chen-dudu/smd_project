@@ -26,7 +26,7 @@ public class HealStrategy implements iControllerStrategy {
     private HashMap<TileType, Integer> pathCost;
 
     /**
-     * create a new healing strategy
+     * create a new healing strategy object
      * @param type the type of search algorithm to be used for searching
      * @param pathCost the path cost for different types of tiles
      */
