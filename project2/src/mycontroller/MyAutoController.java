@@ -10,7 +10,6 @@ import swen30006.driving.Simulation;
 
 import mycontroller.adapters.*;
 import mycontroller.strategies.*;
-import mycontroller.algorithms.*;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -60,12 +59,12 @@ public class MyAutoController extends CarController {
 
 		if (mode == Simulation.StrategyMode.HEALTH) {
 			System.out.println("~~~~");
-			strategy = new HealthStrategy();
+			strategy = new CompositeHealthControllerStrategy();
 			threshold = getHealth() / 4;
 		}
 		else if (mode == Simulation.StrategyMode.FUEL) {
 			System.out.println("@@@@@@");
-			strategy = new FuelStrategy();
+			strategy = new CompositeFuelControllerStrategy();
 			threshold = fuel / 4;
 		}
 		else {
