@@ -84,7 +84,7 @@ public class MyAutoController extends CarController {
 		maps.updateMap(myView);
 		Coordinate currPos = new Coordinate(getPosition());
 
-		if (maps.getDes().contains(currPos)) {
+		if (maps.getExit().contains(currPos)) {
 			applyBrake();
 			return;
 		}
@@ -105,10 +105,10 @@ public class MyAutoController extends CarController {
 			// parcel can't be reached, give up, keep exploring map
 			else {
 				changeState(CarState.EXPLORING);
-				nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps.getDes(), maps);
+				nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps.getExit(), maps);
 			}
 		} else {
-			nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps.getDes(), maps);
+			nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps.getExit(), maps);
 		}
 
 		if(initStart || prevState == CarState.HEALING) {

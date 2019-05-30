@@ -1,10 +1,10 @@
 package mycontroller;
 
-import mycontroller.adapters.AdapterFactory;
-import mycontroller.adapters.TileType;
 import tiles.*;
-import utilities.Coordinate;
 import world.World;
+import utilities.Coordinate;
+import mycontroller.adapters.TileType;
+import mycontroller.adapters.AdapterFactory;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class MyMap {
     // the world the car has seen so far
     private HashMap<Coordinate, MapTile> myMap;
     // coordinates of all finish tiles
-    private ArrayList<Coordinate> destinations;
+    private ArrayList<Coordinate> exits;
 
     /**
      * create a new MyMap object using the given map
@@ -33,7 +33,7 @@ public class MyMap {
     public MyMap(HashMap<Coordinate, MapTile> emptyMap) {
         exploreMap = new int[World.MAP_HEIGHT][World.MAP_WIDTH];
         myMap = new HashMap<>();
-        destinations = new ArrayList<>();
+        exits = new ArrayList<>();
 
         AdapterFactory factory = AdapterFactory.getInstance();
         for(Coordinate next: emptyMap.keySet()) {
@@ -48,7 +48,7 @@ public class MyMap {
             }
             else if(factory.getAdapter(tile).getType(tile) == TileType.FINISH) {
                 myMap.put(next, new MapTile(MapTile.Type.FINISH));
-                destinations.add(next);
+                exits.add(next);
             }
             else if(factory.getAdapter(tile).getType(tile) == TileType.START) {
                 myMap.put(next, new MapTile(MapTile.Type.START));
@@ -129,10 +129,10 @@ public class MyMap {
     public HashMap<Coordinate, MapTile> getMap() { return myMap; }
 
     /**
-     * return coordinates of all destinations
-     * @return coordinates of all destinations
+     * return coordinates of all exit points
+     * @return coordinates of all exit points
      */
-    public ArrayList<Coordinate> getDes() { return destinations; }
+    public ArrayList<Coordinate> getExit() { return exits; }
 
     /**
      * return coordinates of all parcels in the world the car has seen
