@@ -5,7 +5,7 @@ import utilities.Coordinate;
 import mycontroller.algorithms.*;
 import mycontroller.adapters.TileType;
 
-import java.util.*;
+import java.util.HashMap;
 
 /**
  * Team: W9-5
@@ -32,7 +32,7 @@ public class ExitStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(Coordinate curr, ArrayList<Coordinate> des, MyMap map) {
-        return searchAlg.search(curr, des, map.getMap(), pathCost).get(1);
+    public Coordinate getNextPosition(Coordinate curr, MyMap map) {
+        return searchAlg.search(curr, map.getExit(), map.getMap(), pathCost).get(1);
     }
 }

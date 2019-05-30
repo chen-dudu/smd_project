@@ -100,15 +100,15 @@ public class MyAutoController extends CarController {
 		if (currState == CarState.COLLECTING) {
 			PickParcelStrategy temp = (PickParcelStrategy) controllerStrategies.get(currState);
 			if (temp.reachable(maps, currPos, parcelPos)) {
-				nextPos = temp.getNextPosition(currPos, parcelPos, maps);
+				nextPos = temp.getNextPosition(currPos, maps);
 			}
 			// parcel can't be reached, give up, keep exploring map
 			else {
 				changeState(CarState.EXPLORING);
-				nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps.getExit(), maps);
+				nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps);
 			}
 		} else {
-			nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps.getExit(), maps);
+			nextPos = controllerStrategies.get(currState).getNextPosition(currPos, maps);
 		}
 
 		if(initStart || prevState == CarState.HEALING) {

@@ -34,8 +34,8 @@ public class PickParcelStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(Coordinate curr, ArrayList<Coordinate> des, MyMap map) {
-        return searchAlg.search(curr, des, map.getMap(), pathCost).get(1);
+    public Coordinate getNextPosition(Coordinate curr, MyMap map) {
+        return searchAlg.search(curr, map.getParcel(), map.getMap(), pathCost).get(1);
     }
 
     /**

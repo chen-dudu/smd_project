@@ -37,7 +37,7 @@ public class ExploreStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(Coordinate currPos, ArrayList<Coordinate> des, MyMap map) {
+    public Coordinate getNextPosition(Coordinate currPos, MyMap map) {
         ArrayList<Coordinate> nextPos = getPosAround(currPos, map.getMap());
         ArrayList<Coordinate> unseenPos = new ArrayList<>();
         for(Coordinate next: nextPos) {

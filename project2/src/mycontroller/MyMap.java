@@ -23,7 +23,7 @@ public class MyMap {
     private int[][] exploreMap;
     // the world the car has seen so far
     private HashMap<Coordinate, MapTile> myMap;
-    // coordinates of all finish tiles
+    // coordinates of all exit tiles
     private ArrayList<Coordinate> exits;
 
     /**
