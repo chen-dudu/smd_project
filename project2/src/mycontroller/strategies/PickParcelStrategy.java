@@ -1,6 +1,6 @@
 package mycontroller.strategies;
 
-import tiles.MapTile;
+import mycontroller.MyMap;
 import utilities.Coordinate;
 import mycontroller.algorithms.*;
 import mycontroller.adapters.TileType;
@@ -34,9 +34,8 @@ public class PickParcelStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(Coordinate curr, ArrayList<Coordinate> des,
-                                      HashMap<Coordinate, MapTile> map, int[][] seenWorld) {
-        return searchAlg.search(curr, des, map, pathCost).get(1);
+    public Coordinate getNextPosition(Coordinate curr, ArrayList<Coordinate> des, MyMap map) {
+        return searchAlg.search(curr, des, map.getMap(), pathCost).get(1);
     }
 
     /**
@@ -46,8 +45,8 @@ public class PickParcelStrategy implements iControllerStrategy {
      * @param parcels coordinate(s) of parcel(s)
      * @return true if parcels are accessible, false otherwise
      */
-    public boolean reachable(HashMap<Coordinate, MapTile> map, Coordinate currPos,
+    public boolean reachable(MyMap map, Coordinate currPos,
                              ArrayList<Coordinate> parcels) {
-        return searchAlg.search(currPos, parcels, map, pathCost) != null;
+        return searchAlg.search(currPos, parcels, map.getMap(), pathCost) != null;
     }
 }

@@ -1,6 +1,6 @@
 package mycontroller.strategies;
 
-import tiles.MapTile;
+import mycontroller.MyMap;
 import utilities.Coordinate;
 import mycontroller.algorithms.*;
 import mycontroller.adapters.TileType;
@@ -32,8 +32,7 @@ public class ExitStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(Coordinate curr, ArrayList<Coordinate> des,
-                                      HashMap<Coordinate, MapTile> map, int[][] seenWorld) {
-        return searchAlg.search(curr, des, map, pathCost).get(1);
+    public Coordinate getNextPosition(Coordinate curr, ArrayList<Coordinate> des, MyMap map) {
+        return searchAlg.search(curr, des, map.getMap(), pathCost).get(1);
     }
 }

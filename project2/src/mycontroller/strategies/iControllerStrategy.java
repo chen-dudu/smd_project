@@ -1,10 +1,9 @@
 package mycontroller.strategies;
 
-import tiles.MapTile;
+import mycontroller.MyMap;
 import utilities.Coordinate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Team: W9-5
@@ -17,9 +16,7 @@ public interface iControllerStrategy {
      * @param curr the coordinate current position of the car
      * @param des the coordinate(s) of the destination position(s)
      * @param map the map representing the world
-     * @param seenWorld
      * @return the coordinate of the next position the car will move to
      */
-    Coordinate getNextPosition(Coordinate curr, ArrayList<Coordinate> des,
-                               HashMap<Coordinate, MapTile> map, int[][] seenWorld);
+    Coordinate getNextPosition(Coordinate curr, ArrayList<Coordinate> des, MyMap map);
 }

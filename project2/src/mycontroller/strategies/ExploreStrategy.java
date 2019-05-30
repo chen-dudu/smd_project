@@ -1,5 +1,6 @@
 package mycontroller.strategies;
 
+import mycontroller.MyMap;
 import world.Car;
 import world.World;
 import tiles.MapTile;
@@ -36,22 +37,22 @@ public class ExploreStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(Coordinate currPos, ArrayList<Coordinate> des,
-                                      HashMap<Coordinate, MapTile> map, int[][] seenWorld) {
-        ArrayList<Coordinate> nextPos = getPosAround(currPos, map);
+    public Coordinate getNextPosition(Coordinate currPos, ArrayList<Coordinate> des, MyMap map) {
+        ArrayList<Coordinate> nextPos = getPosAround(currPos, map.getMap());
         ArrayList<Coordinate> unseenPos = new ArrayList<>();
         for(Coordinate next: nextPos) {
-            if(seenWorld[next.y][next.x] == 0) {
+            if(map.getExploreMap()[next.y][next.x] == 0) {
                 unseenPos.add(next);
             }
         }
         if(unseenPos.size() > 0) {
             // for all unseen points, choose the closest one
-            return searchAlg.search(currPos, unseenPos, map, pathCost).get(1);
+            return searchAlg.search(currPos, unseenPos, map.getMap(), pathCost).get(1);
         }
         else {
             // all pos around seen, return the closest unseen pos (may be far away)
             ArrayList<Coordinate> candidate = new ArrayList<>();
+            int[][] seenWorld = map.getExploreMap();
             for (int i = 0; i < seenWorld.length; i++) {
                 for (int j = 0; j < seenWorld[i].length; j++) {
                     if (seenWorld[i][j] == 0) {
@@ -63,7 +64,7 @@ public class ExploreStrategy implements iControllerStrategy {
             if(candidate.size() == 0) {
                 return currPos;
             }
-            return searchAlg.search(currPos, candidate, map, pathCost).get(1);
+            return searchAlg.search(currPos, candidate, map.getMap(), pathCost).get(1);
         }
     }
 

@@ -1,6 +1,7 @@
 package mycontroller.strategies;
 
 import tiles.MapTile;
+import mycontroller.MyMap;
 import utilities.Coordinate;
 import mycontroller.algorithms.*;
 import mycontroller.adapters.TileType;
@@ -34,10 +35,9 @@ public class HealStrategy implements iControllerStrategy {
     }
 
     @Override
-    public Coordinate getNextPosition(Coordinate currPos, ArrayList<Coordinate> des,
-                                      HashMap<Coordinate, MapTile> map, int[][] seenWorld) {
-        ArrayList<Coordinate> healths = getHealth(map);
-        return searchAlg.search(currPos, healths, map, pathCost).get(1);
+    public Coordinate getNextPosition(Coordinate currPos, ArrayList<Coordinate> des, MyMap map) {
+        ArrayList<Coordinate> healths = getHealth(map.getMap());
+        return searchAlg.search(currPos, healths, map.getMap(), pathCost).get(1);
     }
 
     // find all health tile in the explored map
