@@ -1,8 +1,8 @@
 package mycontroller.strategies;
 
-import mycontroller.CarState;
 import mycontroller.MyMap;
 import utilities.Coordinate;
+import mycontroller.CarState;
 import mycontroller.algorithms.*;
 import mycontroller.adapters.TileType;
 
@@ -42,4 +42,7 @@ public class ExitStrategy implements iControllerStrategy {
 
     @Override
     public boolean reachable(CarState state, Coordinate currPos, MyMap map) { return true; }
+
+    @Override
+    public void updateTable(TileType type, Integer newValue) {}
 }

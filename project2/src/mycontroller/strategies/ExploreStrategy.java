@@ -1,11 +1,11 @@
 package mycontroller.strategies;
 
-import mycontroller.CarState;
-import mycontroller.MyMap;
 import world.Car;
 import world.World;
 import tiles.MapTile;
+import mycontroller.MyMap;
 import utilities.Coordinate;
+import mycontroller.CarState;
 import mycontroller.algorithms.*;
 import mycontroller.adapters.TileType;
 
@@ -74,6 +74,9 @@ public class ExploreStrategy implements iControllerStrategy {
 
     @Override
     public boolean reachable(CarState state, Coordinate currPos, MyMap map) { return true; }
+
+    @Override
+    public void updateTable(TileType type, Integer newValue) {}
 
     // return the positions next to the given point
     private ArrayList<Coordinate> getPosAround(Coordinate currPos, HashMap<Coordinate, MapTile> map) {

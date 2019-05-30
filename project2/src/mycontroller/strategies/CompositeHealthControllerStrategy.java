@@ -10,7 +10,7 @@ import mycontroller.adapters.TileType;
 public class CompositeHealthControllerStrategy extends CompositeControllerStrategy {
 
     /**
-     * create a new health strategy object
+     * create a new composite health controller strategy object
      */
     public CompositeHealthControllerStrategy() {
         super();

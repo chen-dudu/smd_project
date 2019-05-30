@@ -1,13 +1,12 @@
 package mycontroller.strategies;
 
-import mycontroller.CarState;
 import mycontroller.MyMap;
 import utilities.Coordinate;
+import mycontroller.CarState;
 import mycontroller.algorithms.*;
 import mycontroller.adapters.TileType;
 
 import java.util.HashMap;
-import java.util.ArrayList;
 
 /**
  * Team: W9-5
@@ -46,4 +45,7 @@ public class PickParcelStrategy implements iControllerStrategy {
     public boolean reachable(CarState state, Coordinate currPos, MyMap map) {
         return searchAlg.search(currPos, map.getParcel(), map.getMap(), pathCost) != null;
     }
+
+    @Override
+    public void updateTable(TileType type, Integer newValue) {}
 }

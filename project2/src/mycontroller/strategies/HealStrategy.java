@@ -1,9 +1,9 @@
 package mycontroller.strategies;
 
-import mycontroller.CarState;
 import tiles.MapTile;
 import mycontroller.MyMap;
 import utilities.Coordinate;
+import mycontroller.CarState;
 import mycontroller.algorithms.*;
 import mycontroller.adapters.TileType;
 import mycontroller.adapters.AdapterFactory;
@@ -46,6 +46,9 @@ public class HealStrategy implements iControllerStrategy {
 
     @Override
     public boolean reachable(CarState state, Coordinate currPos, MyMap map) { return true; }
+
+    @Override
+    public void updateTable(TileType type, Integer newValue) {}
 
     // find all health tile in the explored map
     private ArrayList<Coordinate> getHealth(HashMap<Coordinate, MapTile> map) {

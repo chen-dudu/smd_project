@@ -23,6 +23,9 @@ public class CompositeControllerStrategy implements iControllerStrategy {
     // type of search algorithm to be used for finding next position
     private SearchAlgorithmType algorithmType = SearchAlgorithmType.Dijkstra;
 
+    /**
+     * create a new composite controller strategy object
+     */
     public CompositeControllerStrategy() {
         costTable = new HashMap<>();
         strategies = new HashMap<>();
@@ -49,5 +52,10 @@ public class CompositeControllerStrategy implements iControllerStrategy {
             addToStrategy(state, newStrategy);
         }
         return strategies.get(state).reachable(state, currPos, map);
+    }
+
+    @Override
+    public void updateTable(TileType type, Integer newValue) {
+        costTable.put(type, newValue);
     }
 }

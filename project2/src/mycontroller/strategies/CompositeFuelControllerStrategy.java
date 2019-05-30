@@ -10,7 +10,7 @@ import mycontroller.adapters.TileType;
 public class CompositeFuelControllerStrategy extends CompositeControllerStrategy {
 
     /**
-     * create a new fuel strategy object
+     * create a new composite fuel controller strategy object
      */
     public CompositeFuelControllerStrategy() {
         super();

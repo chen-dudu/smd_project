@@ -1,6 +1,7 @@
 package mycontroller.strategies;
 
 import mycontroller.MyMap;
+import mycontroller.adapters.TileType;
 import utilities.Coordinate;
 import mycontroller.CarState;
 
@@ -33,4 +34,11 @@ public interface iControllerStrategy {
      * @return true if parcels are accessible, false otherwise
      */
     boolean reachable(CarState state, Coordinate currPos, MyMap map);
+
+    /**
+     * update the path cost of a tile with specified type
+     * @param type the type of the tile
+     * @param newValue the new value used to update
+     */
+    void updateTable(TileType type, Integer newValue);
 }

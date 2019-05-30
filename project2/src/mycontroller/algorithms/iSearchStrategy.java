@@ -1,11 +1,11 @@
 package mycontroller.algorithms;
 
-import mycontroller.adapters.TileType;
 import tiles.MapTile;
 import utilities.Coordinate;
+import mycontroller.adapters.TileType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Team: W9-5
@@ -18,7 +18,7 @@ public interface iSearchStrategy {
      * @param start the position of the starting point
      * @param des the positions of the destination
      * @param map the map representing the world
-     * @param pathCost a hashmap storing path cost for different types of tiles
+     * @param pathCost a hashMap storing path cost for different types of tiles
      * @return the shortest path
      */
     ArrayList<Coordinate> search(Coordinate start, ArrayList<Coordinate> des,

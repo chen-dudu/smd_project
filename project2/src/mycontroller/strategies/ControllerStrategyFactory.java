@@ -1,13 +1,10 @@
 package mycontroller.strategies;
 
-import tiles.MapTile;
-import utilities.Coordinate;
 import mycontroller.CarState;
 import mycontroller.adapters.TileType;
 import mycontroller.algorithms.SearchAlgorithmType;
 
 import java.util.HashMap;
-import java.util.ArrayList;
 
 /**
  * Team: W9-5
