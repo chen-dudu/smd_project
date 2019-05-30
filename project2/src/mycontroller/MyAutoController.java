@@ -15,6 +15,11 @@ import mycontroller.algorithms.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+/**
+ * Team: W9-5
+ * Description: this is the class representing the autoController we designed
+ *              and implemented
+ */
 public class MyAutoController extends CarController {
 
 	// fuel the car has
