@@ -1,10 +1,10 @@
 package mycontroller.strategies;
 
-import mycontroller.CarState;
 import mycontroller.MyMap;
+import utilities.Coordinate;
+import mycontroller.CarState;
 import mycontroller.adapters.TileType;
 import mycontroller.algorithms.SearchAlgorithmType;
-import utilities.Coordinate;
 
 import java.util.HashMap;
 
