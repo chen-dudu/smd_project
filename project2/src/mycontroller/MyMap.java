@@ -4,6 +4,7 @@ import tiles.*;
 import world.World;
 import utilities.Coordinate;
 import mycontroller.adapters.TileType;
+import mycontroller.adapters.iTileAdapter;
 import mycontroller.adapters.AdapterFactory;
 
 import java.util.HashMap;
@@ -38,19 +39,20 @@ public class MyMap {
         AdapterFactory factory = AdapterFactory.getInstance();
         for(Coordinate next: emptyMap.keySet()) {
             MapTile tile = emptyMap.get(next);
-            if(factory.getAdapter(tile).getType(tile) == TileType.WALL) {
+            iTileAdapter adapter = factory.getAdapter(tile);
+            if(adapter.getType(tile) == TileType.WALL) {
                 myMap.put(next, new MapTile(MapTile.Type.WALL));
                 // all walls are marked as visited
                 exploreMap[next.y][next.x] = 1;
             }
-            else if(factory.getAdapter(tile).getType(tile) == TileType.ROAD) {
+            else if(adapter.getType(tile) == TileType.ROAD) {
                 myMap.put(next, new MapTile(MapTile.Type.ROAD));
             }
-            else if(factory.getAdapter(tile).getType(tile) == TileType.FINISH) {
+            else if(adapter.getType(tile) == TileType.FINISH) {
                 myMap.put(next, new MapTile(MapTile.Type.FINISH));
                 exits.add(next);
             }
-            else if(factory.getAdapter(tile).getType(tile) == TileType.START) {
+            else if(adapter.getType(tile) == TileType.START) {
                 myMap.put(next, new MapTile(MapTile.Type.START));
             }
         }
@@ -68,8 +70,9 @@ public class MyMap {
                 exploreMap[next.y][next.x] = 1;
             }
             MapTile tile = view.get(next);
+            iTileAdapter adapter = factory.getAdapter(tile);
             // update the map recorded using new information
-            switch (factory.getAdapter(tile).getType(tile)) {
+            switch (adapter.getType(tile)) {
                 case WALL:
                     myMap.put(next, new MapTile(MapTile.Type.WALL));
                     break;
