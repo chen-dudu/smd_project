@@ -4,9 +4,8 @@ import tiles.MapTile;
 import mycontroller.MyMap;
 import utilities.Coordinate;
 import mycontroller.CarState;
+import mycontroller.adapters.*;
 import mycontroller.algorithms.*;
-import mycontroller.adapters.TileType;
-import mycontroller.adapters.AdapterFactory;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -53,10 +52,12 @@ public class HealStrategy implements iControllerStrategy {
     // find all health tile in the explored map
     private ArrayList<Coordinate> getHealth(HashMap<Coordinate, MapTile> map) {
         ArrayList<Coordinate> healthCoor = new ArrayList<>();
+        AdapterFactory factory = AdapterFactory.getInstance();
         for(Coordinate next: map.keySet()) {
             MapTile tile = map.get(next);
-            if(AdapterFactory.getInstance().getAdapter(tile).getType(tile) == TileType.HEALTH ||
-                    AdapterFactory.getInstance().getAdapter(tile).getType(tile) == TileType.WATER) {
+            iTileAdapter adapter = factory.getAdapter(tile);
+            if(adapter.getType(tile) == TileType.HEALTH ||
+                    adapter.getType(tile) == TileType.WATER) {
                 healthCoor.add(next);
             }
         }
