@@ -34,8 +34,8 @@ public class MyAutoController extends CarController {
 
 	private MyMap maps;
 
-	private CarState currState;
 	private CarState prevState;
+	private CarState currState;
 
 	private iControllerStrategy strategy;
 
@@ -44,9 +44,13 @@ public class MyAutoController extends CarController {
 	public MyAutoController(Car car) {
 		super(car);
 		fuel = car.getFuel();
-		mode = Simulation.toConserve();
+		originalHealth = getHealth();
+		initStart = true;
+		startEngine = false;
+		prevState = null;
 		currState = CarState.EXPLORING;
 		maps = new MyMap(getMap());
+		mode = Simulation.toConserve();
 
 		if (mode == Simulation.StrategyMode.HEALTH) {
 			strategy = new CompositeHealthControllerStrategy();
@@ -61,11 +65,6 @@ public class MyAutoController extends CarController {
 			System.out.println("unsupported conserve type");
 			System.exit(0);
 		}
-
-		originalHealth = getHealth();
-		startEngine = false;
-		prevState = null;
-		initStart = true;
 	}
 
 	@Override
