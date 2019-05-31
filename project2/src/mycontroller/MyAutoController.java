@@ -54,7 +54,7 @@ public class MyAutoController extends CarController {
 
 		if (mode == Simulation.StrategyMode.HEALTH) {
 			strategy = new CompositeHealthControllerStrategy();
-			threshold = getHealth() / 4;
+			threshold = originalHealth / 4;
 		}
 		else if (mode == Simulation.StrategyMode.FUEL) {
 			strategy = new CompositeFuelControllerStrategy();
